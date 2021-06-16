@@ -1,72 +1,88 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecom/controle/authServices.dart';
-import 'package:flutter_ecom/controle/providers_services/brandGoryProvider.dart';
-import 'package:flutter_ecom/controle/providers_services/product_provider.dart';
 import 'package:flutter_ecom/view/Screens/myHomePage.dart';
+import 'package:flutter_ecom/controle/network.dart';
+import 'package:flutter_ecom/view/Screens/signup.dart';
 import 'package:flutter_ecom/view/Screens/singIn.dart';
 import 'package:flutter_ecom/view/Screens/splashScreen.dart';
 import 'package:flutter_ecom/view/common/constants.dart';
-import 'package:flutter_ecom/view/common/loading.dart';
-import 'package:provider/provider.dart';
+
+import 'package:flutter_ecom/view/common/noInternetUi.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  print('initialized');
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        //  create: (_) => AuthWithEmailPassword.initialize(),
-        ChangeNotifierProvider<AuthWithEmailPassword>(
-            create: (_) => AuthWithEmailPassword.initialize()),
-        ChangeNotifierProvider<ProviderServices>(
-            create: (_) => ProviderServices.initalize()),
-        ChangeNotifierProvider<BrandGoryProvider>(
-            create: (_) => BrandGoryProvider.initialize())
-      ],
-      child: MaterialApp(
+  Widget build(BuildContext context, ScopedReader watch) {
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
-
         theme: ThemeData(
+            scaffoldBackgroundColor: Colors.grey[100],
             primarySwatch: kPrimaryColor,
             visualDensity: VisualDensity.adaptivePlatformDensity,
-            primaryColor: Colors.pink.shade900),
-        home: ScreensController(),
+            primaryColor: Colors.pink[900]),
+        home: ScreensController()
         // ListTest(),
         // MyHomePage(),
-      ),
-    );
+        );
   }
 }
 
-class ScreensController extends StatelessWidget {
+class ScreensController extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    final _authEmalPsword = Provider.of<AuthWithEmailPassword>(context);
+  Widget build(BuildContext context, ScopedReader watch) {
+    final status = watch(authStatus);
+    // AuthWithEmailPassword status = watch(authStatus.notifier);
 
-    switch (_authEmalPsword.status) {
+    switch (status) {
       case Status.unInitialized:
+        print('THE STATUS IS: $status');
         return Splash();
         break;
       case Status.unauthenticated:
+        print('THE STATUS IS: $status');
         return Login();
         break;
-      case Status.authenticating:
-        return Loadng();
-        break;
       case Status.authenticated:
-        return MyHomePage();
-      case Status.processing:
+        print('THE STATUS IS: $status');
         return MyHomePage();
         break;
+      case Status.noNetwork:
+        print('THE STATUS IS: $status');
+        return NoInternetUi();
+        break;
+
       default:
+        print('THE STATUS IS: $status');
         return Login();
     }
   }
 }
+
+// class NetWorkSellector extends ConsumerWidget {
+//   @override
+//   Widget build(BuildContext context, ScopedReader watch) {
+//     final status = watch(internetSream);
+//     // AuthWithEmailPassword status = watch(authStatus.notifier);
+
+//     switch (status) {
+//       case true:
+//         print('THE STATUS IS: $status');
+//         return ScreensController();
+//         break;
+//       case false:
+//         print('THE STATUS IS: $status');
+//         return NoInternetUi();
+//         break;
+//       default:
+//         print('THE STATUS IS: $status');
+//         return Login();
+//     }
+//   }
+// }

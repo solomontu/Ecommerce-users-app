@@ -1,17 +1,55 @@
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ecom/controle/providers_services/product_provider.dart';
+import 'package:flutter_ecom/controle/cartFavoServices.dart';
 import 'package:flutter_ecom/models/productModel.dart';
+import 'package:flutter_ecom/view/Screens/similarProducts.dart';
 import 'package:flutter_ecom/view/common/constants.dart';
-import 'package:flutter_ecom/view/common/transparentImage.dart';
-import 'package:flutter_ecom/view/homeScreenElements/products.dart';
+import 'package:flutter_ecom/view/common/flutterToast.dart';
+import 'package:flutter_ecom/view/common/userId.dart';
+import 'package:flutter_ecom/view/common/uuid.dart';
 import 'package:flutter_ecom/view/widgets.dart/appBar.dart';
-import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProductDetails extends StatefulWidget {
-  final ProductModel productModel;
+  final String productId;
+  final String userid;
+  final String favoriteId;
+  final String payId;
+  final String name;
+  final String brand;
+  final String category;
+  final String detail;
+  final List colors;
+  final List images;
+  final List sizes;
+  final double price;
+  final double cartPrice;
+  final bool sale;
+  final bool featured;
+  final int qty;
+  final List<ProductModel> similarList;
 
-  const ProductDetails({Key key, this.productModel}) : super(key: key);
+  const ProductDetails(
+      {Key key,
+      this.productId,
+      this.userid,
+      this.favoriteId,
+      this.payId,
+      this.name,
+      this.brand,
+      this.category,
+      this.detail,
+      this.colors,
+      this.images,
+      this.sizes,
+      this.price,
+      this.cartPrice,
+      this.sale,
+      this.featured,
+      this.qty,
+      this.similarList})
+      : super(key: key);
 
   @override
   _ProductDetailsState createState() => _ProductDetailsState();
@@ -22,22 +60,18 @@ class _ProductDetailsState extends State<ProductDetails> {
   // final _formKey = GlobalKey<FormState>();
   String sizeDropdownValue;
   String colorsDropdownValue;
-  @override
-  void initState() {
-    sizeDropdownValue = null;
-    colorsDropdownValue = null;
-    super.initState();
-  }
+  CartFavoriteServices _cartServices = CartFavoriteServices();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appbar(context,
-          add: 'add',
+          add: 'notadd',
           home: 'nothome',
-          search: 'search',
+          search: 'notsearch',
           cart: 'cart',
-          store: 'store'),
+          store: 'notstore',
+          favorite: 'favorite'),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -63,41 +97,19 @@ class _ProductDetailsState extends State<ProductDetails> {
                   dotBgColor: Colors.transparent,
                   images: [
                     NetworkImage(
-                      widget.productModel.images[0],
+                      widget.images[0],
                     ),
                     NetworkImage(
-                      widget.productModel.images[1],
+                      widget.images[1],
                     ),
                     // NetworkImage(widget.productModel.images[2],)
+                    NetworkImage(
+                      widget.images[2],
+                    ),
                   ],
                 ),
               ),
             ),
-            //image widget
-            // Container(
-            //     padding: EdgeInsets.symmetric(vertical: 1, horizontal: 3),
-            //     height: MediaQuery.of(context).size.height / 2.5,
-            //     // width: 800,
-            //     width: MediaQuery.of(context).size.width,
-            //     child: ListView.builder(
-            //       scrollDirection: Axis.horizontal,
-            //       itemCount: widget.productModel.images.length,
-            //       itemBuilder: (BuildContext context, int index) {
-            //         return Center(
-            //           child: Container(
-            //             // height: 200,
-            //             width: MediaQuery.of(context).size.width,
-            //             child: GridTile(
-            //               child: FadeInImage.memoryNetwork(
-            //                 fit: BoxFit.contain,
-            //                 placeholder: kTransparentImage,
-            //                 image: widget.productModel.images[index],
-            //               ),
-            //             ),
-            //           ),
-            //         );
-            //       },
-            //     )),
 
             //CALL TO ACTION
             Container(
@@ -108,14 +120,14 @@ class _ProductDetailsState extends State<ProductDetails> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text('${widget.productModel.name}',
+                        child: Text('${widget.name}',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold)),
                       ),
                       Text(''),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text('\$${widget.productModel.price}',
+                        child: Text('\$${widget.price}',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold)),
                       ),
@@ -141,7 +153,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 Icons.arrow_drop_down,
                                 color: kDrawericonsColors,
                               ),
-                              items: widget.productModel.sizes
+                              items: widget.sizes
                                   .map<DropdownMenuItem<String>>((value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
@@ -170,7 +182,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 Icons.arrow_drop_down,
                                 color: kDrawericonsColors,
                               ),
-                              items: widget.productModel.sizes
+                              items: widget.colors
                                   .map<DropdownMenuItem<String>>((value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
@@ -198,6 +210,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               // border: OutlineInputBorder(
                               //   borderSide: BorderSide(width: 2.0),
                               // ),
+
                               border: null,
                               alignLabelWithHint: true,
                             ),
@@ -206,6 +219,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                       ],
                     ),
                   ),
+
+                  // SHOPPING CART
                   Container(
                     margin: EdgeInsets.all(8),
                     // color: Colors.red,
@@ -214,56 +229,129 @@ class _ProductDetailsState extends State<ProductDetails> {
                     child: Row(
                       children: <Widget>[
                         Expanded(
-                          child: Material(
-                            borderRadius: BorderRadius.circular(10),
-                            child: MaterialButton(
-                              onPressed: () {},
-                              color: kPrimaryColor,
-                              child: Text(
-                                'Buy now',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 20),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
                             child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             InkWell(
-                              onTap: () {},
-                              child: Icon(
-                                Icons.add_shopping_cart,
-                                color: kPrimaryColor,
-                                size: 25,
-                              ),
-                            ),
+                                onTap: () {
+                                  assert(
+                                      sizeDropdownValue != null,
+                                      Fluttertoast.showToast(
+                                          msg: 'Sellect size',
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor));
+                                  assert(
+                                      colorsDropdownValue != null,
+                                      Fluttertoast.showToast(
+                                          msg: 'Sellect color',
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor));
+                                  assert(
+                                      _quantityController != null,
+                                      Fluttertoast.showToast(
+                                          msg: 'Sellect Qty',
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor));
+
+                                  _cartServices.addToCart(
+                                    {
+                                      'productId': widget.productId,
+                                      'payId': uuid1,
+                                      'userId': getUserid(),
+                                      'category': widget.category,
+                                      'sale': widget.sale,
+                                      'name': widget.name,
+                                      'qty':
+                                          int.parse(_quantityController.text),
+                                      'price': widget.price,
+                                      'cartPrice': widget.price * doub(),
+                                      'brands': widget.brand,
+                                      'colors': colorsDropdownValue,
+                                      'sizes': sizeDropdownValue,
+                                      'images': widget.images,
+                                    },
+                                  );
+                                  Fluttertoast.showToast(
+                                      msg: 'Added to cart',
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor);
+                                },
+                                child: Icon(
+                                  Icons.shopping_cart_outlined,
+                                  color: kPrimaryColor,
+                                  size: 22,
+                                )),
+
+                            //FAFORITE
                             InkWell(
-                              onTap: () {},
+                              onTap: () async {
+                                if (await _cartServices.addToFavorite(
+                                  {
+                                    'productId': widget.productId,
+                                    'userId': getUserid(),
+                                    'favoriteId': uuid4,
+                                    'sellerid': widget.userid,
+                                    'category': widget.category,
+                                    'sale': widget.sale,
+                                    'name': widget.name,
+                                    'qty': widget.qty,
+                                    'price': widget.price,
+                                    'brands': widget.brand,
+                                    'colors': widget.colors,
+                                    'sizes': widget.sizes,
+                                    'images': widget.images,
+                                    'featured': widget.featured
+                                  },
+                                )) {
+                                  toast(msg: 'Added to favorite');
+                                }
+                              },
                               child: Icon(
                                 Icons.favorite_border,
                                 color: kPrimaryColor,
-                                size: 25,
+                                size: 22,
                               ),
                             ),
-                            InkWell(
-                              onTap: () {},
-                              child: Icon(
-                                Icons.thumb_up_outlined,
-                                color: kPrimaryColor,
-                                size: 25,
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {},
-                              child: Icon(
-                                Icons.thumb_down_alt_outlined,
-                                color: kPrimaryColor,
-                                size: 25,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      8, 1.5, 1.5, 1.5),
+                                  child: Icon(
+                                    Icons.star_outline,
+                                    color: Colors.yellow[600],
+                                    size: 20,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 1, vertical: 1.5),
+                                  child: Icon(
+                                    Icons.star_outline,
+                                    color: Colors.yellow[600],
+                                    size: 20,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 1, vertical: 1.5),
+                                  child: Icon(
+                                    Icons.star_outline,
+                                    color: Colors.yellow[600],
+                                    size: 20,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 1, vertical: 1.5),
+                                  child: Icon(
+                                    Icons.star_outline,
+                                    color: Colors.yellow[600],
+                                    size: 20,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         )),
@@ -274,18 +362,65 @@ class _ProductDetailsState extends State<ProductDetails> {
               ),
             ),
             Divider(),
+
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                height: 100,
-                child: Text(
-                    'Description:\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s  Lorem Ipsum has been the industry standard dummy text ever since the 1500s ',
-                    style: TextStyle()),
-              ),
+              child: widget.detail.isEmpty
+                  ? SizedBox()
+                  : SizedBox(
+                      height: 100,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 2.5),
+                            child: Container(
+                                child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Similar products',
+                                  style: TextStyle(fontSize: 17),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ],
+                            )),
+                          ),
+                          Text(widget.detail, style: TextStyle()),
+                        ],
+                      ),
+                    ),
             ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.5),
+              child: Container(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Similar products',
+                    style: TextStyle(fontSize: 17),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              )),
+            ),
+            Container(
+                child: SimilarProducts(
+              productModel: widget.similarList,
+            )),
+            SizedBox(height: 10),
           ],
         ),
       ),
     );
+  }
+
+  double doub() {
+    String contla = _quantityController.text;
+    double val = double.parse(contla);
+    return val;
   }
 }

@@ -1,69 +1,72 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_ecom/controle/userServices.dart';
 import 'package:flutter_ecom/models/userModel.dart';
-
-// abstract class AuthServices {
-//   signUpAuthentic();
-//   signInAuthentic();
-//   logOut();
-// }
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum Status {
   unInitialized,
   unauthenticated,
   authenticating,
   authenticated,
-  processing
+  noAccount,
+  noNetwork
 }
 
-class AuthWithEmailPassword with ChangeNotifier {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+// = Status.unInitialized;
+final authStatus = StateNotifierProvider<AuthWithEmailPassword, Status>(
+    (ref) => AuthWithEmailPassword.initialize());
 
-  Status _status = Status.unInitialized;
+class AuthWithEmailPassword extends StateNotifier<Status> {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   UserServices _userServices = UserServices();
+  // Status state = Status.unInitialized;
 
   FirebaseAuth _auth;
+  Connectivity connect;
   UserModel _userModel;
   User _user;
-  Status get status => _status;
+  bool netwoka;
+  // Status get status => _status;
   User get user => _user;
   UserModel get userModel => _userModel;
-
   String _error;
   String get error => _error;
 
   //Name consturctor of this class
-  AuthWithEmailPassword.initialize() : _auth = FirebaseAuth.instance {
-    _status = Status.unInitialized;
-    notifyListeners();
-    _auth.authStateChanges().listen((User value) async {
-      // await Future.delayed(const Duration(milliseconds: 900), () {
-      _status = Status.unInitialized;
-      notifyListeners();
-      if (value == null) {
-        _status = Status.unauthenticated;
-        notifyListeners();
-        print('user is signed out');
-      } else {
-        _userModel = await _userServices.getUserByUid(id: value.uid);
-        _status = Status.authenticated;
-        _user = value;
-        print('user signed in');
-      }
+  AuthWithEmailPassword.initialize()
+      : _auth = FirebaseAuth.instance,
+        connect = Connectivity(),
+        super(Status.unInitialized) {
+    connect.onConnectivityChanged.listen((event) {
+      if (event != ConnectivityResult.none) {
+        _auth.authStateChanges().listen((User value) async {
+          await Future.delayed(
+            const Duration(milliseconds: 4000),
+          );
+          if (value == null) {
+            state = Status.unauthenticated;
+            print('user is signed out');
+          }
+          if (value != null) {
+            _userModel = await _userServices.getUserByUid(id: value.uid);
+            _user = value;
 
-      notifyListeners();
-      // });
+            print('user signed in');
+            state = Status.authenticated;
+          }
+        });
+      } else {
+        state = Status.noNetwork;
+      }
     });
   }
 
   //CREATE USER
   Future<bool> signUp({Map userMap}) async {
-    // Call the user's CollectionReference to add a new user
     try {
-      _status = Status.authenticating;
-      notifyListeners();
+      state = Status.authenticating;
       await _auth
           .createUserWithEmailAndPassword(
               email: userMap['Email'], password: userMap['Password'])
@@ -73,20 +76,10 @@ class AuthWithEmailPassword with ChangeNotifier {
         await _userServices.createUser(userMap);
         _userModel = await _userServices.getUserByUid(id: user.user.uid);
       });
-      _error = "User Added";
+      _error = "Your has account been created";
       return true;
-    } on FirebaseAuthException catch (e) {
-      _status = Status.unInitialized;
-      notifyListeners();
-      if (e.code == 'weak-password') {
-        _error = 'The password provided is too weak.';
-      } else if (e.code == 'email-already-in-use') {
-        _error = 'The account already exists for that email.';
-      }
-      return false;
     } catch (e) {
-      _status = Status.unInitialized;
-      notifyListeners();
+      state = Status.unauthenticated;
       _error = e.toString();
       return false;
     }
@@ -96,49 +89,42 @@ class AuthWithEmailPassword with ChangeNotifier {
   // @override
   Future<bool> signInAuthentic({String emaill, String passwordd}) async {
     try {
-      _status = Status.authenticating;
-      notifyListeners();
+      state = Status.authenticating;
       await _auth
           .signInWithEmailAndPassword(email: emaill, password: passwordd)
           .then((user) async {
         _userModel = await _userServices.getUserByUid(id: user.user.uid);
       });
       return true;
-    } on FirebaseAuthException catch (e) {
-      _status = Status.unauthenticated;
-      notifyListeners();
-      if (e.code == 'user-not-found') {
-        _error = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        _error = 'Wrong password provided for that user.';
-      }
-      if (e.code == 'invalid-email') {
-        _error = 'invalid email.';
-      }
-      return false;
     } catch (e) {
-      _status = Status.unauthenticated;
-      notifyListeners();
-      print(e.toString);
-      _error = e.toString();
+      state = Status.unauthenticated;
+      print(e.toString());
+      _error = 'invalid email or password';
       return false;
-    }
-  }
-
-  // @override
-  logOut() async {
-    notifyListeners();
-    _status = Status.processing;
-    try {
-      await _auth.signOut();
-      notifyListeners();
-      _status = Status.unauthenticated;
-    } on Exception catch (e) {
-      print(e);
     }
     // return false;
   }
 
-  //what happens when the auth state changes
+  // @override
+  Future<bool> logOut() async {
+    try {
+      state = Status.authenticating;
+      await _auth.signOut();
+      _userModel = null;
+      return true;
+    } on Exception catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
 
+  Future<bool> chekNetwork() {
+    return connect.checkConnectivity().then((value) {
+      if (value != ConnectivityResult.none) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  }
 }

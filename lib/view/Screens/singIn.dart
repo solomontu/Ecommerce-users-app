@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecom/controle/authServices.dart';
+import 'package:flutter_ecom/view/Screens/myHomePage.dart';
+import 'package:flutter_ecom/view/common/flutterToast.dart';
 import 'package:flutter_ecom/view/common/loading.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
-import 'signup.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_ecom/view/Screens/signup.dart';
+// import 'signup.dart';
 // import '../dp/authServices.dart';
 
-class Login extends StatefulWidget {
-  @override
-  _LoginState createState() => _LoginState();
-}
-
-class _LoginState extends State<Login> {
+class Login extends ConsumerWidget {
   // final model = UserModel();
 
   final _formKeyLogIn = GlobalKey<FormState>();
@@ -30,231 +28,256 @@ class _LoginState extends State<Login> {
   //   super.initState();
   // }
 
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    _email.dispose();
-    _password.dispose();
-    super.dispose();
-  }
+  // void dispose() {
+  //   // Clean up the controller when the widget is disposed.
+  //   _email.dispose();
+  //   _password.dispose();
+  //   super.dispose();
+  // }
 
   @override
-  Widget build(BuildContext context) {
-    final _user = Provider.of<AuthWithEmailPassword>(context);
+  Widget build(BuildContext context, ScopedReader watch) {
+    Status status = watch(authStatus);
+    AuthWithEmailPassword others = watch(authStatus.notifier);
+    final hidepassword = watch(passWordVisbility);
+
     return Scaffold(
       key: _scaffoldKey,
-      body: _user.status == Status.authenticating
-          ? Center(child: Loadng())
-          : Center(
-        child: SingleChildScrollView(
-          child: Form(key: _formKeyLogIn,
-            child: Column(
-              children: <Widget>[
-
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    // margin: EdgeInsets.only(top: 20),
-                    height: 150,
-                    width: 150,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        // color: Colors.white,
-                        image: DecorationImage(
-                            image: AssetImage(
-                                'Assets/images/singleImages/lg.png'))),
-                  ),
-                ),
-                //EMAIL FIELD SETTINGS
-                Padding(
-                  padding: EdgeInsets.only(
-                    // top: minimumPadding -5,
-                      bottom: minimumPadding,
-                      left: minimumPadding,
-                      right: minimumPadding),
-                  child: Material(
-                    elevation: 20,
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                    child: TextFormField(
-                      // onChanged: (value) {
-                      //   emailer();
-                      // },
-                      keyboardType: TextInputType.emailAddress,
-                      controller: _email,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          // borderSide:
-                          //     BorderSide(color: Colors.pinkAccent)
-                        ),
-                        prefixIcon: Icon(Icons.alternate_email),
-                        // alignLabelWithHint: true,
-                        labelText: 'Email or Phone',
-                      ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'empty field';
-                        }
-                        Pattern pattern =
-                            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                        RegExp regex = new RegExp(pattern);
-                        if (!regex.hasMatch(value)) {
-                          return 'Invalid email address';
-                        } else
-                          return null;
-                      },
-                      // onSaved: (input) => _email = input.trim(),
-                    ),
-                  ),
-                ),
-
-                // PASSWORD FIELD SETTINGS
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: minimumPadding, right: minimumPadding),
-                  child: Material(
-                    elevation: 20,
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.grey[300],
-                    child: TextFormField(
-                      // onChanged: (value) {
-                      //   passworder();
-                      // },
-                      controller: _password,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          // borderSide:
-                          //     BorderSide(color: Colors.pinkAccent)
-                        ),
-                        prefixIcon: Icon(Icons.lock_outline),
-                        labelText: 'Password',
-                      ),
-                      validator: (input) {
-                        if (input.isEmpty) {
-                          return "Empty field";
-                        } else if (input.length < 6) {
-                          return 'Your password must have at least 6 characters';
-                        }
-                        return null;
-                      },
-                      // onSaved: (input) => _passWord = input.trim(),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: minimumPadding, horizontal: minimumPadding),
-                  child: MaterialButton(
-                    // textColor: Colors.black,
-
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-
-                    onPressed: () async {
-                      // AuthWithEmailPassword(
-                      //   email: model.email,
-                      //   password: model.passWord,
-                      // );
-                      assert(_formKeyLogIn.currentState.validate() == true);
-
-                      if (!await _user.signInAuthentic(
-                          emaill: _email.text, passwordd: _password.text)) {
-                        Fluttertoast.showToast(msg: _user.error.toString());
-                        // _scaffoldKey.currentState.showSnackBar(SnackBar(
-                        //   content: Text(_user.error),
-                        // ));
-                      }
-                    },
-
-                    color: Colors.pink,
-                    child: Text(
-                      'Signin',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 26,
-                          letterSpacing: 2.0),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    InkWell(
-                        onTap: () {},
-                        child: RichText(
-                          text: TextSpan(
-                            text: 'Forgot password',
-                            style: TextStyle(
-                              // fontStyle: FontStyle.italic,
-                                color: Colors.black),
-                          ),
-                          textAlign: TextAlign.center,
-                        )),
-                    InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SignUp()));
-                        },
-                        child: RichText(
-                          text: TextSpan(
-                            text: 'Creat an account',
-                            style: TextStyle(
-                              // fontStyle: FontStyle.italic,
-                                color: Colors.black),
-                          ),
-                          textAlign: TextAlign.center,
-                        )),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Or',
-                    style: TextStyle(fontSize: 27),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: Center(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Form(
+                key: _formKeyLogIn,
+                child: Column(
                   children: <Widget>[
                     Padding(
-                        padding: EdgeInsets.only(bottom: minimumPadding),
-                        child: InkWell(
-                          onTap: () {
-                            // Do stuff here;
-                          },
-                          child: Container(
-                            child: SvgPicture.asset(
-                              'Assets/images/singleImages/facebook-logo@logotyp.us.svg',
-                              width: 40,
-                              height: 60,
-                            ),
-                            // alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30)),
-                          ),
-                        )),
+                      padding: const EdgeInsets.only(top: 30.0, bottom: 15),
+                      child: Text(
+                        'Flushion',
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 40,
+                            letterSpacing: 4),
+                      ),
+                    ),
+
+                    //EMAIL FIELD SETTINGS
                     Padding(
-                        padding: EdgeInsets.only(
-                            left: minimumPadding, bottom: minimumPadding),
-                        child: InkWell(
-                          onTap: () {},
-                          child: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            backgroundImage: AssetImage(
-                                'Assets/images/singleImages/ggg.png'),
+                      padding: EdgeInsets.only(
+                          // top: minimumPadding -5,
+                          bottom: minimumPadding,
+                          left: minimumPadding,
+                          right: minimumPadding),
+                      child: Material(
+                        elevation: 20,
+                        // color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(10),
+                        child: TextFormField(
+                          // onChanged: (value) {
+                          //   emailer();
+                          // },
+                          keyboardType: TextInputType.emailAddress,
+                          controller: _email,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              // borderSide:
+                              //     BorderSide(color: Colors.pinkAccent)
+                            ),
+                            prefixIcon: Icon(Icons.alternate_email),
+                            // alignLabelWithHint: true,
+                            labelText: 'Email',
                           ),
-                        )),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'empty field';
+                            }
+                            Pattern pattern =
+                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                            RegExp regex = new RegExp(pattern);
+                            if (!regex.hasMatch(value)) {
+                              return 'Invalid email address';
+                            } else
+                              return null;
+                          },
+                          // onSaved: (input) => _email = input.trim(),
+                        ),
+                      ),
+                    ),
+
+                    // PASSWORD FIELD SETTINGS
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: minimumPadding, right: minimumPadding),
+                      child: Material(
+                        elevation: 20,
+                        borderRadius: BorderRadius.circular(10),
+                        // color: Colors.grey[300],
+                        child: TextFormField(
+                          // onChanged: (value) {
+                          //   passworder();
+                          // },
+                          controller: _password,
+                          obscureText: hidepassword.state,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              // borderSide:
+                              //     BorderSide(color: Colors.pinkAccent)
+                            ),
+                            prefixIcon: Icon(Icons.lock_outline),
+                            suffixIcon: GestureDetector(
+                                child: Icon(Icons.remove_red_eye,
+                                    color: hidepassword.state
+                                        ? Colors.grey
+                                        : Theme.of(context).primaryColor),
+                                onTap: () => hidepassword.state
+                                    ? hidepassword.state = false
+                                    : hidepassword.state = true),
+                            labelText: 'Password',
+                          ),
+                          validator: (input) {
+                            if (input.isEmpty) {
+                              return "Empty field";
+                            } else if (input.length < 6) {
+                              return 'Your password must have at least 6 characters';
+                            }
+                            return null;
+                          },
+                          // onSaved: (input) => _passWord = input.trim(),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: minimumPadding, horizontal: minimumPadding),
+                      child: MaterialButton(
+                        // textColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+
+                        onPressed: () async {
+                          // AuthWithEmailPassword(
+                          //   email: model.email,
+                          //   password: model.passWord,
+                          // );
+                          assert(_formKeyLogIn.currentState.validate() == true);
+                          assert(await others.chekNetwork() == true,
+                              await toast(msg: 'No network'));
+                          var event = await others.signInAuthentic(
+                              emaill: _email.text, passwordd: _password.text);
+
+                          if (event == true) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => MyHomePage()));
+                          } else {
+                            await toast(msg: others.error.toString());
+                          }
+                        },
+
+                        color: Colors.pink,
+                        child: Text(
+                          'Signin',
+                          style: TextStyle(
+                              color: Colors.white,
+                              // fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              letterSpacing: 2.0),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () {},
+                          child: Text(
+                            'Forgot password',
+                            style: TextStyle(letterSpacing: 1.5),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SignUp()));
+                          },
+                          child: Text(
+                            'Creat an account',
+                            style: TextStyle(letterSpacing: 1.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'Or',
+                      style:
+                          TextStyle(color: Colors.black54, letterSpacing: 1.5),
+                      textAlign: TextAlign.center,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.only(bottom: minimumPadding),
+                            child: InkWell(
+                              onTap: () {
+                                // Do stuff here;
+                              },
+                              child: Container(
+                                child: SvgPicture.asset(
+                                  'Assets/images/singleImages/facebook-logo@logotyp.us.svg',
+                                  width: 40,
+                                  height: 60,
+                                ),
+                                // alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30)),
+                              ),
+                            )),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: minimumPadding, bottom: minimumPadding),
+                            child: InkWell(
+                              onTap: () {},
+                              child: CircleAvatar(
+                                backgroundColor: Colors.transparent,
+                                backgroundImage: AssetImage(
+                                    'Assets/images/singleImages/ggg.png'),
+                              ),
+                            )),
+                      ],
+                    )
                   ],
-                )
-              ],
+                ),
+              ),
             ),
-          ),
+            Visibility(
+                visible: status == Status.authenticating,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      // shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.7)),
+                  child: Center(
+                    child: Container(
+                      color: Colors.white,
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(Colors.red),
+                      ),
+                    ),
+                  ),
+                ))
+          ],
         ),
       ),
     );

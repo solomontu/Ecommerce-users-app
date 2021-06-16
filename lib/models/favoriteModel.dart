@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 
-class ProductModel {
+class FavoriteModel {
   static const USERID = 'userid';
+  static const SELLERID = 'sellerid';
   static const PRODUCTID = 'productId';
+  static const FAVORITEID = 'favoriteId';
   static const NAME = 'name';
   static const BRAND = 'brands';
   static const CATEGORY = 'category';
@@ -15,10 +17,11 @@ class ProductModel {
   static const SIZES = 'sizes';
   static const IMAGES = 'images';
   static const COLORS = 'colors';
-  static const DETAIL = 'details';
 
   String _productId;
+  String _sellerId;
   String _userid;
+  String _favoriteId;
   String _name;
   String _brand;
   String _category;
@@ -29,15 +32,15 @@ class ProductModel {
   bool _sale;
   bool _featured;
   int _qty;
-  String _detail;
 
-  ProductModel(
+  FavoriteModel(
       [this._name,
       this._qty,
       this._price,
       this._category,
       this._brand,
-      this._detail]) {
+      this._sellerId,
+      this._favoriteId]) {
     _colors = [];
     _sizes = [];
     _images = [];
@@ -49,11 +52,12 @@ class ProductModel {
 
 //GETTERS
   String get productId => this._productId;
+  String get favoriteId => this._favoriteId;
+  String get sellerId => this._sellerId;
   String get userid => this._userid;
   String get name => this._name;
   String get brand => this._brand;
   String get category => this._category;
-  String get detail => this._detail;
   bool get sale => this._sale;
   bool get feature => this._featured;
   double get price => this._price;
@@ -64,11 +68,12 @@ class ProductModel {
 
   //SETTERS
   set productId(String newProductId) => this._productId = newProductId;
+  set sellerId(String sellerId) => this._sellerId = sellerId;
   set userid(String newUserId) => this._userid = newUserId;
+  set favoriteId(String newFavoriteId) => this._favoriteId;
   set name(String newName) => this._name = newName;
   set brand(String newBrand) => this._brand = newBrand;
   set category(String newCategory) => this._category = newCategory;
-  set detail(String newDetial) => this._detail = newDetial;
   set sale(bool newSale) => this.sale = newSale;
   set feature(bool newFeature) => this._featured = newFeature;
   set price(double newPrice) => this._price = newPrice;
@@ -81,9 +86,10 @@ class ProductModel {
   Map<String, dynamic> toMap() {
     return {
       PRODUCTID: _productId,
+      SELLERID: _sellerId,
       USERID: userid,
+      FAVORITEID: _favoriteId,
       CATEGORY: _category,
-      DETAIL: _detail,
       SALE: _sale,
       NAME: _name,
       QTY: _qty,
@@ -94,29 +100,17 @@ class ProductModel {
       SIZES: _sizes,
       IMAGES: _images
     };
-    // var map = Map<String, dynamic>();
-    // map[ID] = _productId;
-    // map[FEATURED] = _featured;
-    // map[SALE] = _sale;
-    // map[NAME] = _name;
-    // map[QTY] = _qty;
-    // map[PRICE] = _price;
-    // map[CATEGORY] = _category;
-    // map[BRAND] = _brand;
-    // map[COLORS] = _colors;
-    // map[SIZES] = _sizes;
-    // map[IMAGES] = _images;
-    // return map;
   }
 
-  ProductModel.fromSnapShot(QueryDocumentSnapshot snapshot) {
+  FavoriteModel.fromSnapShot(QueryDocumentSnapshot snapshot) {
     Map data = snapshot.data();
     _productId = data[PRODUCTID];
+    _sellerId = data[SELLERID];
+    _favoriteId = data[FAVORITEID];
     _userid = data[USERID] ?? '';
     _name = data[NAME];
     _brand = data[BRAND];
     _category = data[CATEGORY];
-    _detail = data[DETAIL]??'';
     _colors = data[COLORS];
     _sale = data[SALE];
     _featured = data[FEATURED];
@@ -126,7 +120,7 @@ class ProductModel {
     _images = data[IMAGES];
   }
 
-  ProductModel.categoryFromSnapShot(DocumentSnapshot snapshot) {
+  FavoriteModel.categoryFromSnapShot(DocumentSnapshot snapshot) {
     Map data = snapshot.data();
     this._category = data['Categories'];
     print(_category.length);

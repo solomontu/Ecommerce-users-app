@@ -40,7 +40,11 @@ dependencies:
   firebase_storage: 
   circular_check_box: 
   pie_chart:
-  riverpod: ^0.14.0+1
+  flutter_riverpod: ^0.14.0+2
+  connectivity: ^3.0.4
+  overlay_support: ^1.2.1
+  uuid: 3.0.4
+  ffi: ^1.0.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -64,35 +68,6 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - Assets/ProfileImage/soloc.jpg
-    - Assets/ProfileImage/profile image.png
-  # - carousel_pro_images  
-    - Assets/images/carousel/c1.jpg
-    - Assets/images/carousel/m1.jpeg
-    - Assets/images/carousel/m2.jpg
-    - Assets/images/carousel/w1.jpeg
-    - Assets/images/carousel/w3.jpeg
-    - Assets/images/carousel/w4.jpeg
-  # - categories images
-    - Assets/images/cats/accessories.png
-    - Assets/images/cats/dress.png
-    - Assets/images/cats/formal.png
-    - Assets/images/cats/informal.png
-    - Assets/images/cats/jeans.png
-    - Assets/images/cats/shoe.png
-    - Assets/images/cats/tshirt.png
-  # - product images
-    - Assets/images/products/blazer1.jpeg
-    - Assets/images/products/blazer2.jpeg
-    - Assets/images/products/dress1.jpeg
-    - Assets/images/products/dress2.jpeg
-    - Assets/images/products/hills1.jpeg
-    - Assets/images/products/hills2.jpeg
-    - Assets/images/products/pants1.jpg
-    - Assets/images/products/pants2.jpeg
-    - Assets/images/products/shoe1.jpg
-    - Assets/images/products/skt1.jpeg
-    - Assets/images/products/skt2.jpeg
   # - background image
     - Assets/images/singleImages/
     

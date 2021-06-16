@@ -1,24 +1,37 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ecom/controle/authServices.dart';
 import 'package:flutter_ecom/models/userModel.dart';
 import 'package:flutter_ecom/view/Screens/myHomePage.dart';
-import 'package:flutter_ecom/view/common/loading.dart';
+import 'package:flutter_ecom/view/common/flutterToast.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignUp extends StatefulWidget {
-  final errorMessage;
+enum GenderCharacter { male, female, others, initial }
 
-  const SignUp({Key key, this.errorMessage}) : super(key: key);
-  @override
-  _SignUpState createState() => _SignUpState();
-}
+final passWordVisbility = StateProvider<bool>((ref) {
+  return true;
+});
+final gender = StateProvider<GenderCharacter>((ref) {
+  return GenderCharacter.initial;
+});
+final birthDayDropValue = StateProvider<int>((ref) {
+  int value;
+  return value;
+});
+final birthMonthDropValue = StateProvider<int>((ref) {
+  int value;
+  return value;
+});
+final birthYearDropValue = StateProvider<int>((ref) {
+  int value;
+  return value;
+});
 
-enum GenderCharacter { male, female, others }
-
-class _SignUpState extends State<SignUp> {
+// ignore: must_be_immutable
+class SignUp extends ConsumerWidget {
   UserModel model = UserModel();
 
   final emailController = TextEditingController();
@@ -29,109 +42,143 @@ class _SignUpState extends State<SignUp> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // final model = model();
-  int birthDayDropValue;
-  int birthMonthDropValue;
-  int birthYearDopValue;
+
   String genderString;
   bool validDate = false;
   bool loading = false;
   bool isLogedIn = false;
-  bool hidepassword = true; /*for hiding the passeord with red_eye_icon*/
+  // bool hidepassword = true; /*for hiding the passeord with red_eye_icon*/
 
-  GenderCharacter _character;
   final minimumPadding = 10.0;
 
   var now = new DateTime.now();
   // var berlinWallFell = new DateTime.utc(1989, 11, 9);
 
-  @override
-  void initState() {
-    firstNameController.text = model.firstName;
-    surNameController.text = model.surName;
-    emailController.text = model.email;
-    passwordController.text = model.passWord;
-    birthDayDropValue = now.day;
-    birthMonthDropValue = now.month;
-    birthYearDopValue = now.year;
-
-    // initializeFlutterFire();
-    // isSignedIn();
-    super.initState();
-  }
+  int dayString;
+  int yearString;
+  int monthString;
 
   @override
-  Widget build(BuildContext context) {
-    final _user = Provider.of<AuthWithEmailPassword>(context);
+  Widget build(BuildContext context, ScopedReader watch) {
+    Status status = watch(authStatus);
+    AuthWithEmailPassword others = watch(authStatus.notifier);
+    final hidepassword = watch(passWordVisbility);
+    final _character = watch(gender);
+    final day = watch(birthDayDropValue);
+    final month = watch(birthMonthDropValue);
+    final year = watch(birthYearDropValue);
     return Scaffold(
       key: _scaffoldKey,
-      body: _user.status == Status.authenticating
-          ? Loadng()
-          : Center(
-            child: SingleChildScrollView(
-              child: Form( key: _formKeySignUp,
-                child: Column(
-                  children: [
-
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        // margin: EdgeInsets.only(top: 20),
-                        height: 150,
-                        width: 150,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            // color: Colors.white,
-                            image: DecorationImage(
-                                image: AssetImage(
-                                    'Assets/images/singleImages/lg.png'))),
-                      ),
-                    ),
-                    //First name
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal:12.0,vertical:4),
-                      child: Material(
-                        elevation: 20,
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10),
-                        child: TextFormField(
-                          keyboardType: TextInputType.text,
-                          controller: firstNameController,
-                          decoration: InputDecoration(
-                            // border: InputBorder.none,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              // borderSide:
-                              //     BorderSide(color: Colors.pinkAccent)
-                            ),
-                            prefixIcon: Icon(Icons.person,color: Colors.black,),
-                            // alignLabelWithHint: true,
-                            hintText: 'First name',
-                          ),
-                          validator: (input) {
-                            if (input.isEmpty) {
-                              return "input name";
-                            } else if (input.length < 2) {
-                              return "name too short";
-                            }
-                            return null;
-                          },
-                          onChanged: (value) {
-                            firstNameContModel();
-                          },
+      body: Center(
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 30, bottom: 20),
+              child: Form(
+                key: _formKeySignUp,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30.0, bottom: 15),
+                        child: Text(
+                          'Flushion',
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 40,
+                              letterSpacing: 4),
                         ),
                       ),
-                    ),
-
-                    //Last Name
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal:12.0,vertical:4),
-                      child: Material(
-                        elevation: 20,
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10),
-                        child: TextFormField(
+                      // First name
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 4),
+                        child: Material(
+                          elevation: 20,
+                          // color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
+                          child: TextFormField(
                             keyboardType: TextInputType.text,
-                            controller: surNameController,
+                            controller: firstNameController,
+                            decoration: InputDecoration(
+                              // border: InputBorder.none,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                // borderSide:
+                                //     BorderSide(color: Colors.pinkAccent)
+                              ),
+                              prefixIcon: Icon(
+                                Icons.person,
+                                // color: Colors.black,
+                              ),
+                              // alignLabelWithHint: true,
+                              hintText: 'First name',
+                            ),
+                            validator: (input) {
+                              if (input.isEmpty) {
+                                return "input name";
+                              } else if (input.length < 2) {
+                                return "name too short";
+                              }
+                              return null;
+                            },
+                            onChanged: (value) {
+                              firstNameContModel();
+                            },
+                          ),
+                        ),
+                      ),
+
+                      //Last Name
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 4),
+                        child: Material(
+                          elevation: 20,
+                          // color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
+                          child: TextFormField(
+                              keyboardType: TextInputType.text,
+                              controller: surNameController,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  // borderSide:
+                                  //     BorderSide(color: Colors.pinkAccent)
+                                ),
+                                // border: InputBorder.none,
+                                prefixIcon: Icon(
+                                  Icons.person_outline,
+                                  // color: Colors.black
+                                ),
+                                // alignLabelWithHint: true,
+                                hintText: 'Surname',
+                              ),
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'Input surname';
+                                }
+
+                                return null;
+                              },
+                              onChanged: (value) {
+                                surNameContModel();
+                              }),
+                        ),
+                      ),
+
+                      //EMAIL FIELD SETTINGS
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 4),
+                        child: Material(
+                          elevation: 20,
+                          // color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
+                          child: TextFormField(
+                            keyboardType: TextInputType.emailAddress,
+                            controller: emailController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
@@ -139,533 +186,472 @@ class _SignUpState extends State<SignUp> {
                                 //     BorderSide(color: Colors.pinkAccent)
                               ),
                               // border: InputBorder.none,
-                              prefixIcon: Icon(Icons.person_outline,color:Colors.black),
+                              prefixIcon: Icon(
+                                Icons.alternate_email,
+                                //  color: Colors.black
+                              ),
                               // alignLabelWithHint: true,
-                              hintText: 'Surname',
+                              hintText: 'Email or phone',
                             ),
                             validator: (value) {
                               if (value.isEmpty) {
-                                return 'Input surname';
+                                return 'enter your email';
                               }
-
-                              return null;
+                              Pattern pattern =
+                                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                              RegExp regex = new RegExp(pattern);
+                              if (!regex.hasMatch(value))
+                                return 'Invalid email address';
+                              else
+                                return null;
                             },
                             onChanged: (value) {
-                              surNameContModel();
-                            }),
-                      ),
-                    ),
-
-                    //EMAIL FIELD SETTINGS
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal:12.0,vertical:4),
-                      child: Material(
-                        elevation: 20,
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10),
-                        child: TextFormField(
-                          keyboardType: TextInputType.emailAddress,
-                          controller: emailController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              // borderSide:
-                              //     BorderSide(color: Colors.pinkAccent)
-                            ),
-                            // border: InputBorder.none,
-                            prefixIcon: Icon(Icons.alternate_email,color:Colors.black),
-                            // alignLabelWithHint: true,
-                            hintText: 'Email or phone',
+                              emailContModel();
+                            },
                           ),
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'enter your email';
-                            }
-                            Pattern pattern =
-                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                            RegExp regex = new RegExp(pattern);
-                            if (!regex.hasMatch(value))
-                              return 'Invalid email address';
-                            else
-                              return null;
-                          },
-                          onChanged: (value) {
-                            emailContModel();
-                          },
                         ),
                       ),
-                    ),
 
-                    // PASSWORD FIELD SETTINGS
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal:12.0,vertical:4),
-                      child: Material(
-                        elevation: 20,
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10),
-                        child: TextFormField(
-                          obscureText: hidepassword,
-                          keyboardType: TextInputType.visiblePassword,
-                          controller: passwordController,
-                          decoration: InputDecoration(
+                      // PASSWORD FIELD SETTINGS
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 4),
+                        child: Material(
+                          elevation: 20,
+                          // color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
+                          child: TextFormField(
+                            obscureText: hidepassword.state,
+                            keyboardType: TextInputType.visiblePassword,
+                            controller: passwordController,
+                            decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                                 // borderSide:
                                 //     BorderSide(color: Colors.pinkAccent)
                               ),
-                            // border: InputBorder.none,
-                            prefixIcon: Icon(Icons.lock_outline,color:Colors.black),
-                            suffixIcon: GestureDetector(
-                              child: Icon(Icons.remove_red_eye,
-                                  color: hidepassword == true
-                                      ? Colors.grey
-                                      : Theme.of(context).primaryColor),
-                              onTap: () => setState(() {
-                                if (hidepassword == true) {
-                                  hidepassword = false;
-                                } else if (hidepassword == false) {
-                                  hidepassword = true;
-                                }
-                                // hidepassword;
-                              }),
-                              onDoubleTap: () => setState(() {
-                                hidepassword = hidepassword = true;
-                              }),
+                              // border: InputBorder.none,
+                              prefixIcon: Icon(
+                                Icons.lock_outline,
+                                // color: Colors.black
+                              ),
+                              suffixIcon: GestureDetector(
+                                  child: Icon(Icons.remove_red_eye,
+                                      color: hidepassword.state
+                                          ? Colors.grey
+                                          : Theme.of(context).primaryColor),
+                                  onTap: () => hidepassword.state
+                                      ? hidepassword.state = false
+                                      : hidepassword.state = true),
+                              hintText: 'Password',
                             ),
-                            hintText: 'Password',
+                            validator: (input) {
+                              if (input.isEmpty) {
+                                return "enter your password";
+                              }
+                              return null;
+                            },
+                            onChanged: (value) {
+                              passwordContModel();
+                            },
                           ),
-                          validator: (input) {
-                            if (input.isEmpty) {
-                              return "enter your password";
-                            }
-                            return null;
-                          },
-                          onChanged: (value) {
-                            passwordContModel();
-                          },
                         ),
                       ),
-                    ),
 
-                    //================ RADIO BUTTON ============= =======================
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: minimumPadding,vertical: 8
-                      ),
-                      child: Container(
-                        // color: Colors.grey[300],
-                        child: Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            //Genders column
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    'Gender',
-                                    style: TextStyle(
+                      //================ RADIO BUTTON ============= =======================
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: minimumPadding, vertical: 8),
+                        child: Container(
+                          // color: Colors.grey[300],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              //Genders column
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      'Gender',
+                                      style: TextStyle(
+                                        letterSpacing: 1.5,
                                         color: Colors.black,
-                                        fontWeight: FontWeight.w900),
-                                  ),
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                    Material(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.white.withOpacity(0.5),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            //MALE
+                                            Column(
+                                              children: <Widget>[
+                                                Radio(
+                                                    activeColor:
+                                                        Theme.of(context)
+                                                            .primaryColor,
+                                                    materialTapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                    value: GenderCharacter.male,
+                                                    groupValue:
+                                                        _character.state,
+                                                    onChanged: (value) {
+                                                      _character.state = value;
+                                                      genderStringValue(
+                                                          _character.state);
+                                                    }),
+                                                Text('m',
+                                                    style: TextStyle(
+                                                        color: Colors.black54))
+                                              ],
+                                            ),
+                                            //FEAMLE
+                                            Column(
+                                              // mainAxisAlignment: MainAxisAlignment.start,
+                                              children: <Widget>[
+                                                Radio(
+                                                    activeColor:
+                                                        Theme.of(context)
+                                                            .primaryColor,
+                                                    materialTapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                    value:
+                                                        GenderCharacter.female,
+                                                    groupValue:
+                                                        _character.state,
+                                                    onChanged: (value) {
+                                                      _character.state = value;
+
+                                                      genderStringValue(
+                                                          _character.state);
+                                                    }),
+                                                Text('f',
+                                                    style: TextStyle(
+                                                      color: Colors.black54,
+                                                    ))
+                                              ],
+                                            ),
+                                            //OTHERS
+                                            Column(
+                                              // mainAxisAlignment: MainAxisAlignment.start,
+                                              children: <Widget>[
+                                                Radio(
+                                                    activeColor:
+                                                        Theme.of(context)
+                                                            .primaryColor,
+                                                    materialTapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                    value:
+                                                        GenderCharacter.others,
+                                                    groupValue:
+                                                        _character.state,
+                                                    onChanged: (value) {
+                                                      _character.state = value;
+                                                      genderStringValue(
+                                                          _character.state);
+                                                    }),
+                                                Text('o',
+                                                    style: TextStyle(
+                                                        color: Colors.black54)),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5.0,
+                              ),
+
+                              // ================Birthday column=================
+                              Expanded(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Text('Date of birth',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w900,
+                                          letterSpacing: 1.5)),
                                   Container(
                                     decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(10),
-                                      color: Colors.white
-                                          .withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white.withOpacity(0.5),
                                     ),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .spaceBetween,
+                                          MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
-                                        //MALE
+                                        // BIRTH DAY DROPDOWN
                                         Column(
                                           children: <Widget>[
-                                            Radio(
-                                                activeColor:
-                                                    Theme.of(context)
-                                                        .primaryColor,
-                                                materialTapTargetSize:
-                                                    MaterialTapTargetSize
-                                                        .shrinkWrap,
-                                                value: GenderCharacter
-                                                    .male,
-                                                groupValue:
-                                                    _character,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    _character =
-                                                        value;
-                                                    genderStringValue(
-                                                        _character);
-                                                  });
-                                                }),
-                                            Text('m',
-                                                style: TextStyle(
-                                                    color: Colors
-                                                        .black54))
+                                            SizedBox(
+                                              height: 30,
+                                              child: DropdownButton(
+                                                  underline: SizedBox(),
+                                                  dropdownColor: Colors.white70,
+                                                  elevation: 20,
+                                                  value: day.state,
+                                                  items: daylist().map<
+                                                      DropdownMenuItem<
+                                                          int>>((int value) {
+                                                    return DropdownMenuItem(
+                                                        value: value,
+                                                        child: Text(
+                                                          '$value',
+                                                          style: TextStyle(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .primaryColor),
+                                                        ));
+                                                  }).toList(),
+                                                  onChanged: (int value) {
+                                                    day.state = value;
+                                                    dayString = value;
+                                                  }),
+                                            ),
+                                            Text(
+                                              'd',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.black54),
+                                            )
                                           ],
                                         ),
-                                        //FEAMLE
-                                        Column(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: <Widget>[
-                                            Radio(
-                                                activeColor:
-                                                    Theme.of(context)
-                                                        .primaryColor,
-                                                materialTapTargetSize:
-                                                    MaterialTapTargetSize
-                                                        .shrinkWrap,
-                                                value: GenderCharacter
-                                                    .female,
-                                                groupValue:
-                                                    _character,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    _character =
-                                                        value;
 
-                                                    genderStringValue(
-                                                        _character);
-                                                  });
-                                                }),
-                                            Text('f',
-                                                style: TextStyle(
-                                                  color:
-                                                      Colors.black54,
-                                                ))
-                                          ],
-                                        ),
-                                        //OTHERS
+                                        //BIRTH MONTH
                                         Column(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
                                           children: <Widget>[
-                                            Radio(
-                                                activeColor:
-                                                    Theme.of(context)
-                                                        .primaryColor,
-                                                materialTapTargetSize:
-                                                    MaterialTapTargetSize
-                                                        .shrinkWrap,
-                                                value: GenderCharacter
-                                                    .others,
-                                                groupValue:
-                                                    _character,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    _character =
-                                                        value;
-                                                    genderStringValue(
-                                                        _character);
-                                                  });
-                                                }),
-                                            Text('o',
-                                                style: TextStyle(
-                                                    color: Colors
-                                                        .black54)),
+                                            SizedBox(
+                                              height: 30,
+                                              child: DropdownButton(
+                                                  underline: SizedBox(),
+                                                  dropdownColor: Colors.white70,
+                                                  elevation: 20,
+                                                  value: month.state,
+                                                  items: monthList().map<
+                                                      DropdownMenuItem<
+                                                          int>>((value) {
+                                                    return DropdownMenuItem<
+                                                        int>(
+                                                      value: value,
+                                                      child: Text(
+                                                        '$value',
+                                                        style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (int value) {
+                                                    month.state = value;
+                                                    monthString = value;
+                                                  }),
+                                            ),
+                                            Text(
+                                              'm',
+                                              style: TextStyle(
+                                                  color: Colors.black54),
+                                            )
                                           ],
                                         ),
+
+                                        // BIRTHYEAR DROPDOWN
+                                        Column(
+                                          children: <Widget>[
+                                            SizedBox(
+                                              height: 30,
+                                              child: DropdownButton(
+                                                  underline: SizedBox(),
+                                                  dropdownColor: Colors.white70,
+                                                  elevation: 20,
+                                                  value: year.state,
+                                                  items: yearlist().map<
+                                                      DropdownMenuItem<
+                                                          int>>((int value) {
+                                                    return DropdownMenuItem<
+                                                        int>(
+                                                      value: value,
+                                                      child: Text(
+                                                        '$value',
+                                                        style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (int value) {
+                                                    year.state = value;
+                                                    yearString = value;
+                                                  }),
+                                            ),
+                                            Text(
+                                              'y',
+                                              style: TextStyle(
+                                                  color: Colors.black54),
+                                            )
+                                          ],
+                                        )
                                       ],
                                     ),
                                   ),
                                 ],
-                              ),
-                            ),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-
-                            // ================Birthday column=================
-                            Expanded(
-                                child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.center,
-                              mainAxisAlignment:
-                                  MainAxisAlignment.start,
-                              children: <Widget>[
-                                Text('Date of birth',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w900)),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(10),
-                                    color:
-                                        Colors.white.withOpacity(0.5),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      // BIRTH DAY DROPDOWN
-                                      Column(
-                                        children: <Widget>[
-                                          DropdownButton(
-                                              underline: SizedBox(),
-                                              dropdownColor:
-                                                  Colors.white70,
-                                              elevation: 20,
-                                              value:
-                                                  birthDayDropValue,
-                                              items: daylist().map<
-                                                  DropdownMenuItem<
-                                                      int>>((int
-                                                  value) {
-                                                return DropdownMenuItem(
-                                                    value: value,
-                                                    child: Text(
-                                                      '$value',
-                                                      style: TextStyle(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .primaryColor),
-                                                    ));
-                                              }).toList(),
-                                              onChanged: (int value) {
-                                                setState(() {
-                                                  birthDayDropValue =
-                                                      value;
-                                                });
-                                              }),
-                                          Text(
-                                            'd',
-                                            textAlign:
-                                                TextAlign.center,
-                                            style: TextStyle(
-                                                color:
-                                                    Colors.black54),
-                                          )
-                                        ],
-                                      ),
-
-                                      //BIRTH MONTH
-                                      Column(
-                                        children: <Widget>[
-                                          DropdownButton(
-                                              underline: SizedBox(),
-                                              dropdownColor:
-                                                  Colors.white70,
-                                              elevation: 20,
-                                              value:
-                                                  birthMonthDropValue,
-                                              items: monthList().map<
-                                                  DropdownMenuItem<
-                                                      int>>((value) {
-                                                return DropdownMenuItem<
-                                                    int>(
-                                                  value: value,
-                                                  child: Text(
-                                                    '$value',
-                                                    style: TextStyle(
-                                                        color: Theme.of(
-                                                                context)
-                                                            .primaryColor),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (int value) {
-                                                setState(() {
-                                                  birthMonthDropValue =
-                                                      value;
-                                                });
-                                              }),
-                                          Text(
-                                            'm',
-                                            style: TextStyle(
-                                                color:
-                                                    Colors.black54),
-                                          )
-                                        ],
-                                      ),
-
-                                      // BIRTHYEAR DROPDOWN
-                                      Column(
-                                        children: <Widget>[
-                                          DropdownButton(
-                                              underline: SizedBox(),
-                                              dropdownColor:
-                                                  Colors.white70,
-                                              elevation: 20,
-                                              value:
-                                                  birthYearDopValue,
-                                              items: yearlist().map<
-                                                  DropdownMenuItem<
-                                                      int>>((int
-                                                  value) {
-                                                return DropdownMenuItem<
-                                                    int>(
-                                                  value: value,
-                                                  child: Text(
-                                                    '$value',
-                                                    style: TextStyle(
-                                                        color: Theme.of(
-                                                                context)
-                                                            .primaryColor),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (int value) {
-                                                setState(() {
-                                                  birthYearDopValue =
-                                                      value;
-                                                });
-                                              }),
-                                          Text(
-                                            'y',
-                                            style: TextStyle(
-                                                color:
-                                                    Colors.black54),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ))
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: minimumPadding),
-                      child: MaterialButton(
-                        // textColor: Colors.black,
-
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-
-                        onPressed: () async {
-                          FormState _formState = _formKeySignUp.currentState;
-                          if (_formState.validate() && _validator() == true) {
-                            if (!await _user.signUp(userMap: model.toMap())) {
-                              // Fluttertoast.showToast(
-                              //     msg: _user.error.toString());
-                              _scaffoldKey.currentState.showSnackBar(SnackBar(
-                                content: Text(_user.error.toString()),
-                              ));
-                            } else {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => MyHomePage()));
-                            }
-                          }
-                        },
-
-                        color: Colors.pink,
-                        child: Text(
-                          'Signup',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 26,
-                              letterSpacing: 2.0),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            'Already have an account ?',
-                            textAlign: TextAlign.center,
-                          )
-                          // RichText(
-                          //   text: TextSpan(
-                          //     text: 'Allready have an account?',
-                          //     style: TextStyle(
-                          //         fontStyle: FontStyle.italic,
-                          //         // color: Colors.deepOrange
-                          //         ),
-                          //   ),
-                          //   textAlign: TextAlign.center,
-                          // )
+                              ))
+                            ],
                           ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: minimumPadding),
+                        child: MaterialButton(
+                          // textColor: Colors.black,
+
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+
+                          onPressed: () async {
+                            _validator();
+                            FormState _formState = _formKeySignUp.currentState;
+                            if (_formState.validate() && _validator() == true) {
+                              assert(await others.chekNetwork() == true,
+                                  toast(msg: 'No network'));
+                              Future<bool> signUp =
+                                  others.signUp(userMap: model.toMap());
+
+                              if (!await signUp) {
+                                toast(
+                                  msg: others.error.toString(),
+                                );
+
+                                // _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                //   content: Text(others.error.toString()),
+                                // ));
+                              } else {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => MyHomePage()));
+                              }
+                            }
+                          },
+
+                          color: Colors.pink,
+                          child: Text(
+                            'Signup',
+                            style: TextStyle(
+                                color: Colors.white,
+                                // fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                letterSpacing: 2.0),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                            borderRadius: BorderRadius.circular(20),
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              'Already has an account ?',
+                              style: TextStyle(letterSpacing: 1.5),
+                              textAlign: TextAlign.center,
+                            )),
+                      ),
+                      Text(
                         'Or',
-                        style: TextStyle(fontSize: 15),
+                        style: TextStyle(
+                            color: Colors.black54, letterSpacing: 1.5),
                         textAlign: TextAlign.center,
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(bottom: minimumPadding),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(20),
-                              onTap: () {
-                                // Do stuff here;
-                              },
-                              child: Container(
-                                child: SvgPicture.asset(
-                                  'Assets/images/singleImages/facebook-logo@logotyp.us.svg',
-                                  width: 40,
-                                  height: 60,
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(bottom: minimumPadding),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(20),
+                                onTap: () {
+                                  // Do stuff here;
+                                },
+                                child: ClipOval(
+                                  child: SvgPicture.asset(
+                                    'Assets/images/singleImages/facebook-logo@logotyp.us.svg',
+                                    width: 50,
+                                    height: 50,
+                                  ),
                                 ),
-                                // alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30)),
-                              ),
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: minimumPadding, bottom: minimumPadding),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(20),
-                              onTap: () {},
-                              child: CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                backgroundImage: AssetImage(
-                                    'Assets/images/singleImages/ggg.png'),
-                              ),
-                            )),
-                      ],
-                    ),
-                    // Visibility(
-                    //     visible: loading ?? true,
-                    //     child: Container(
-                    //       height: double.infinity,
-                    //       width: double.infinity,
-                    //       alignment: Alignment.center,
-                    //       decoration: BoxDecoration(
-                    //           shape: BoxShape.circle,
-                    //           color: Colors.white.withOpacity(0.7)),
-                    //       child: Center(
-                    //         child: Container(
-                    //           height: 20,
-                    //           width: 20,
-                    //           child: CircularProgressIndicator(
-                    //             valueColor: AlwaysStoppedAnimation(Colors.red),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ))
-                  ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(bottom: minimumPadding),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(20),
+                                onTap: () {
+                                  // Do stuff here;
+                                },
+                                child: ClipOval(
+                                    child: Image(
+                                  image: AssetImage(
+                                      'Assets/images/singleImages/ggg.png'),
+                                  height: 40,
+                                  width: 40,
+                                )
+
+                                    // ),
+                                    ),
+                              )),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+            Visibility(
+                visible: status == Status.authenticating,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      // shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.7)),
+                  child: Center(
+                    child: Container(
+                      color: Colors.white,
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(Colors.red),
+                      ),
+                    ),
+                  ),
+                ))
+          ],
+        ),
+      ),
     );
   }
 
@@ -679,11 +665,27 @@ class _SignUpState extends State<SignUp> {
 
   //VALIDATE AND SUBMINT
   bool _validator() {
-    assert(model.gender != null, Fluttertoast.showToast(msg: 'sellect gender'));
-
-    assert(birthYearDopValue != now.year,
-        Fluttertoast.showToast(msg: 'invalid date'));
     dateToString();
+    assert(model.gender != null, toast(msg: 'sellect gender'));
+
+    assert(
+        dayString != null,
+        toast(
+          msg: 'sellect day',
+        ));
+    assert(
+        monthString != null,
+        toast(
+          msg: 'sellect month',
+        ));
+    assert(
+        yearString != null,
+        toast(
+          msg: 'sellect year',
+        ));
+    // assert(day != now.year,
+    //     Fluttertoast.showToast(msg: 'invalid date'));
+
     return true;
   }
 
@@ -700,7 +702,7 @@ class _SignUpState extends State<SignUp> {
 
   //YEAR DROPDOWN;
   List<int> yearlist() {
-    List<int> yearOfBirth = List<int>();
+    List<int> yearOfBirth = <int>[];
 
     for (int i = now.year; i != 1959; i--) {
       yearOfBirth.add(i);
@@ -711,7 +713,7 @@ class _SignUpState extends State<SignUp> {
 
   // DAY DROPDOWN
   List<int> daylist() {
-    List dayOfBirth = List<int>();
+    List dayOfBirth = <int>[];
     for (int i = 1; i <= 31; i++) {
       dayOfBirth.add(i);
     }
@@ -720,19 +722,19 @@ class _SignUpState extends State<SignUp> {
 
 // MONTH DROOPDOWN
   List<int> monthList() {
-    List montyOfBirth = List<int>();
+    List montyOfBirth = <int>[];
     for (int i = 1; i <= 12; i++) {
       montyOfBirth.add(i);
     }
     return montyOfBirth;
   }
 
-//convert the date integer values to string value
+// //convert the date integer values to string value
   dateToString() {
-    String day = birthDayDropValue.toString();
-    String month = birthMonthDropValue.toString();
-    String year = birthYearDopValue.toString();
+    String day = dayString.toString();
+    String month = monthString.toString();
+    String year = yearString.toString();
     model.dateOfBirth = '$day/$month/$year ';
-    print(model.dateOfBirth);
+    print('THE DAY MONT AND YEAR IS: $day/$month/$year');
   }
 }

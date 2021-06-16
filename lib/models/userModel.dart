@@ -8,6 +8,7 @@ class UserModel {
   static const GENDER = 'Gender';
   static const DATE_OF_BIRTH = 'Date of birth';
   static const PHOTOURL = 'PhotoUrl';
+  static const UID = 'Uid';
 
   String _uid;
   String _email;
@@ -28,7 +29,6 @@ class UserModel {
       this._surName,
       this._photoUrl]);
 
-  // List<Map<String, dynamic>> _dateOfBirth;
 
   String get email => _email;
   String get passWord => _passWord;
@@ -38,8 +38,6 @@ class UserModel {
   String get gender => _gender;
   String get uid => _uid;
   String get photoUrl => _photoUrl;
-
-  // List get date => _dateOfBirth;
 
   set email(String newEmail) => this._email = newEmail;
 
@@ -73,13 +71,26 @@ class UserModel {
   //from shapshot values to map
   UserModel.fromSnapShot(DocumentSnapshot snapshot) {
     Map data = snapshot.data();
-    _email = data[EMAIL];
-    _passWord = data[PASSWORD];
-    _firstName = data[FIRST_NAME];
-    _surName = data[SURNAME];
-    _dateOfBirth = data[DATE_OF_BIRTH];
-    _gender = data[GENDER];
-    _photoUrl = data[PHOTOURL];
+    _email = data[EMAIL] ?? '';
+    _passWord = data[PASSWORD] ?? '';
+    _firstName = data[FIRST_NAME] ?? '';
+    _surName = data[SURNAME] ?? '';
+    _dateOfBirth = data[DATE_OF_BIRTH] ?? '';
+    _gender = data[GENDER] ?? '';
+    _photoUrl = data[PHOTOURL] ??
+        'https://firebasestorage.googleapis.com/v0/b/ecommerce-cbc61.appspot.com/o/cusom_images%2Fprofile%20image.png?alt=media&token=5be100b2-ac9c-4413-9c39-d1f947cddac1';
+  }
+
+  //from shapshot values to map
+  UserModel.fromSnapSteam(DocumentSnapshot snapshot) {
+    Map data = snapshot.data();
+    _email = data[EMAIL] ?? '';
+    _passWord = data[PASSWORD] ?? '';
+    _firstName = data[FIRST_NAME] ?? '';
+    _surName = data[SURNAME] ?? '';
+    _dateOfBirth = data[DATE_OF_BIRTH] ?? '';
+    _gender = data[GENDER] ?? '';
+    _photoUrl = data[PHOTOURL] ?? '';
   }
 }
 //

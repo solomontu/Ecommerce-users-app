@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_ecom/models/userModel.dart';
 
 class UserServices {
@@ -19,8 +18,8 @@ class UserServices {
   Future<UserModel> getUserByUid({String id}) async =>
       _usersData.doc(id).get().then((doc) => UserModel.fromSnapShot(doc));
 
-  Stream<UserModel> getUserByiId({String id}) => _usersData
-      .doc(id)
-      .snapshots()
-      .map((event) => UserModel.fromSnapShot(event));
+  //       //GET USERS BY UID
+  // Stream<UserModel> getUserByUUid({String id})  =>
+  //     _usersData.where('id', isEqualTo: id).snapshots().map((event) =>  UserModel.fromSnapShot(event.docs));
+
 }

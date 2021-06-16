@@ -1,43 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ecom/controle/authServices.dart';
-import 'package:flutter_ecom/view/common/loading.dart';
+import 'package:flutter_ecom/view/Screens/favoriteBody.dart';
+import 'package:flutter_ecom/view/Screens/searchField.dart';
+import 'package:flutter_ecom/view/homeScreenElements/addProduct.dart';
 import 'package:flutter_ecom/view/homeScreenElements/drawer.dart';
 import 'package:flutter_ecom/view/homeScreenElements/featured_products.dart';
 import 'package:flutter_ecom/view/homeScreenElements/products.dart';
-import 'package:provider/provider.dart';
-import '../widgets.dart/appBar.dart';
+import 'package:flutter_ecom/view/widgets.dart/appBar.dart';
+import 'package:flutter_ecom/view/widgets.dart/cartBody.dart';
 
-enum Page { column, search }
+import 'package:overlay_support/overlay_support.dart';
 
-class MyHomePage extends StatelessWidget {
+// enum Page { column, search }
+
+class MyHomePage extends StatefulWidget {
   final String title;
   final bool loading;
 
   const MyHomePage({Key key, this.title, this.loading}) : super(key: key);
 
   @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
   Widget build(BuildContext context) {
-    AuthWithEmailPassword _user = Provider.of<AuthWithEmailPassword>(context);
-    return Scaffold(
-      appBar: appbar(context,
-          store: 'store',
-          add: 'add',
-          home: 'nothome',
-          search: 'search',
-          cart: 'cart'),
-      //Drawer
-      drawer: DrawerItems(),
-      body: _user.status == Status.authenticating
-          ? Loadng()
-          : Container(
-              height: double.infinity,
-              width: double.infinity,
+    return OverlaySupport.global(
+      child: Scaffold(
+        appBar: appbar(context,
+            add: 'add',
+            home: 'nothome',
+            search: 'search',
+            cart: 'cart',
+            store: 'notstore',
+            favorite: 'favorite'),
+
+        // appbar(
+        //   context,
+        //   store: 'notstore',
+        //   add: 'add',
+        //   home: 'nothome',
+        //   search: 'search',
+        //   favorite: 'favorite',
+        //   cart: 'cart',
+        // ),
+
+        //Drawer
+        drawer: DrawerItems(),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          physics: ClampingScrollPhysics(),
+          child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
               child: Column(
                 children: <Widget>[
                   FeaturedProducts(),
                   Expanded(child: RecentProducts()),
                 ],
               )),
+        ),
+      ),
     );
   }
 }

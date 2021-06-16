@@ -1,21 +1,18 @@
-import 'dart:ui';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ecom/view/Screens/myStore.dart';
 import 'package:flutter_ecom/controle/authServices.dart';
-import 'package:flutter_ecom/controle/editProfileCont.dart';
-import 'package:flutter_ecom/models/userModel.dart';
-// import 'package:flutter_ecom/Screens/singIn.dart';
-import 'package:flutter_ecom/view/Screens/myHomePage.dart';
+import 'package:flutter_ecom/view/Screens/favoriteBody.dart';
+import 'package:flutter_ecom/view/Screens/singIn.dart';
 import 'package:flutter_ecom/view/common/constants.dart';
-import 'package:flutter_ecom/view/common/transparentImage.dart';
 import 'package:flutter_ecom/view/Screens/editProfileSreen.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_ecom/view/widgets.dart/cartBody.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DrawerItems extends StatelessWidget {
+class DrawerItems extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    final _user = Provider.of<AuthWithEmailPassword>(context);
+  Widget build(BuildContext context, ScopedReader watch) {
+    // final _user = Provider.of<AuthWithEmailPassword>(context);
+    AuthWithEmailPassword _user = watch(authStatus.notifier);
 
     return Material(
       child: SizedBox(
@@ -25,27 +22,22 @@ class DrawerItems extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               UserAccountsDrawerHeader(
-                  currentAccountPicture: Container(
-                      height: 100,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
+                  currentAccountPicture: ClipOval(
+                    child: CircleAvatar(
+                      maxRadius: 60,
+                      child: InkWell(onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditProfile(
+                                      uid: _user.user.uid,
+                                    )));
+                      }),
+                      backgroundImage: NetworkImage(
+                        _user.userModel.photoUrl,
                       ),
-                      child: CircleAvatar(maxRadius: 50,
-                        child: InkWell(onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditProfile(
-                                        uid: _user.user.uid,
-                                      )));
-                        }),
-                        backgroundImage: _user.userModel.photoUrl == null
-                            ? AssetImage(
-                                'Assets/ProfileImage/profile image.png')
-                            : CachedNetworkImage(imageUrl:_user.userModel.photoUrl,),
-                      )),
+                    ),
+                  ),
                   accountName: Text(
                     '${_user.userModel.firstName} ${_user.userModel.surName}',
                     style: TextStyle(
@@ -58,29 +50,6 @@ class DrawerItems extends StatelessWidget {
               Expanded(
                 child: ListView(
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GestureDetector(
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.home,
-                              color: kDrawericonsColors,
-                              size: 30,
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                'Home',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ),
-                          ],
-                        ),
-                        onTap: () {},
-                      ),
-                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
@@ -147,7 +116,12 @@ class DrawerItems extends StatelessWidget {
                             ),
                           ],
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CartBody()));
+                        },
                       ),
                     ),
                     Padding(
@@ -155,6 +129,7 @@ class DrawerItems extends StatelessWidget {
                       child: GestureDetector(
                         child: Row(
                           children: [
+                            // MyStore
                             Icon(
                               Icons.favorite,
                               color: kDrawericonsColors,
@@ -170,7 +145,41 @@ class DrawerItems extends StatelessWidget {
                             ),
                           ],
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Favorite()));
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        child: Row(
+                          children: [
+                            // MyStore
+                            Icon(
+                              Icons.notes,
+                              color: kDrawericonsColors,
+                              size: 25,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                'My shop',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MyStore()));
+                        },
                       ),
                     ),
                     SizedBox(
@@ -199,7 +208,12 @@ class DrawerItems extends StatelessWidget {
                           ],
                         ),
                         onTap: () async {
-                          await _user.logOut();
+                          if (await _user.logOut()) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Login()));
+                          }
                         },
                       ),
                     ),
@@ -257,5 +271,3 @@ class DrawerItems extends StatelessWidget {
     );
   }
 }
-
-

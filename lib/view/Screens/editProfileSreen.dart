@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecom/controle/editProfileCont.dart';
 import 'package:flutter_ecom/view/widgets.dart/appBar.dart';
@@ -36,10 +37,11 @@ class _EditProfileState extends State<EditProfile> {
     return Scaffold(
       appBar: appbar(context,
           home: 'nothome',
-          search: 'search',
-          cart: 'cart',
-          add: 'add',
-          store: 'store'),
+          search: 'notsearch',
+          cart: 'notcart',
+          add: 'notadd',
+          store: 'notstore',
+          favorite: 'notfavorite'),
       body: Column(
           // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -55,12 +57,11 @@ class _EditProfileState extends State<EditProfile> {
                         await getImage();
                       },
                       child: CircleAvatar(
-                        maxRadius: 50,
-                        backgroundImage: image != null
-                            ? FileImage(image)
-                            : AssetImage(
-                                'Assets/ProfileImage/profile image.png'),
-                      ),
+                          maxRadius: 50,
+                          backgroundImage: image != null
+                              ? FileImage(image)
+                              : CachedNetworkImageProvider(
+                                  'https://firebasestorage.googleapis.com/v0/b/ecommerce-cbc61.appspot.com/o/cusom_images%2Fprofile%20image.png?alt=media&token=5be100b2-ac9c-4413-9c39-d1f947cddac1')),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),

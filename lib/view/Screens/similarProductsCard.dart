@@ -4,13 +4,13 @@ import 'package:flutter_ecom/models/productModel.dart';
 import 'package:flutter_ecom/view/Screens/produtsDetails.dart';
 import 'package:flutter_ecom/view/common/navigation.dart';
 import 'package:flutter_ecom/view/common/transparentImage.dart';
-import 'package:uuid/uuid.dart';
 
-class FeatuedCard extends StatelessWidget {
+
+class SimilarProdctsCard extends StatelessWidget {
   final ProductModel productModel;
-
-  FeatuedCard({this.productModel});
   ProductctServices productctServices = ProductctServices();
+
+  SimilarProdctsCard({this.productModel});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,8 +38,9 @@ class FeatuedCard extends StatelessWidget {
                     sale: productModel.sale,
                     userid: productModel.userid,
                     detail: productModel.detail,
-                    similarList: await productctServices
-                        .getSimilarProducts(productModel.category.toString())));
+                    similarList: await productctServices.getSimilarProducts(
+                      productModel.category.toString(),
+                    )));
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
