@@ -5,7 +5,6 @@ import 'package:flutter_ecom/view/Screens/produtsDetails.dart';
 import 'package:flutter_ecom/view/common/navigation.dart';
 import 'package:flutter_ecom/view/common/transparentImage.dart';
 
-
 class SimilarProdctsCard extends StatelessWidget {
   final ProductModel productModel;
   ProductctServices productctServices = ProductctServices();
@@ -13,49 +12,51 @@ class SimilarProdctsCard extends StatelessWidget {
   SimilarProdctsCard({this.productModel});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 2.5, right: 2.5, top: 5),
+    return Padding(
+      padding: const EdgeInsets.all(2),
       child: Hero(
         tag: DateTime.now().millisecondsSinceEpoch.toString(),
-        child: InkWell(
-          splashColor: Colors.pink,
-          highlightColor: Colors.pink,
-          onTap: () async {
-            // ModelTesting(productModel);
-            changeScreen(
-                context,
-                ProductDetails(
-                    brand: productModel.brand,
-                    category: productModel.category,
-                    colors: productModel.colors,
-                    featured: productModel.feature,
-                    images: productModel.images,
-                    name: productModel.name,
-                    price: productModel.price,
-                    qty: productModel.qty,
-                    productId: productModel.productId,
-                    sizes: productModel.sizes,
-                    sale: productModel.sale,
-                    userid: productModel.userid,
-                    detail: productModel.detail,
-                    similarList: await productctServices.getSimilarProducts(
-                      productModel.category.toString(),
-                    )));
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                height: 135,
-                width: 110,
-                // color: Colors.transparent,IK
-                child: Card(
+        child: Card(
+          elevation: 0.5,
+          child: InkWell(
+            splashColor: Colors.pink,
+            highlightColor: Colors.pink,
+            onTap: () async {
+              // ModelTesting(productModel);
+              changeScreen(
+                  context,
+                  ProductDetails(
+                      brand: productModel.brand,
+                      category: productModel.category,
+                      colors: productModel.colors,
+                      featured: productModel.feature,
+                      images: productModel.images,
+                      name: productModel.name,
+                      price: productModel.price,
+                      qty: productModel.qty,
+                      productId: productModel.productId,
+                      sizes: productModel.sizes,
+                      sale: productModel.sale,
+                      userid: productModel.userid,
+                      detail: productModel.detail,
+                      similarList: await productctServices.getSimilarProducts(
+                        productModel.category.toString(),
+                      )));
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  height: 155,
+                  width: 130,
+                  // color: Colors.transparent,IK
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      FadeInImage.memoryNetwork(
-                          placeholder: kTransparentImage,
-                          image: productModel.images[0]),
+                      Image(image: NetworkImage(productModel.images[0])),
+                      // FadeInImage.memoryNetwork(
+                      //     placeholder: kTransparentImage,
+                      //     image: productModel.images[0]),
                       Positioned(
                           height: 50,
                           bottom: 0,
@@ -86,8 +87,8 @@ class SimilarProdctsCard extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

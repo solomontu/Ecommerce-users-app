@@ -17,6 +17,7 @@ class FavoriteModel {
   static const SIZES = 'sizes';
   static const IMAGES = 'images';
   static const COLORS = 'colors';
+  static const DETAIL = 'details';
 
   String _productId;
   String _sellerId;
@@ -32,6 +33,7 @@ class FavoriteModel {
   bool _sale;
   bool _featured;
   int _qty;
+  String _detail;
 
   FavoriteModel(
       [this._name,
@@ -40,7 +42,8 @@ class FavoriteModel {
       this._category,
       this._brand,
       this._sellerId,
-      this._favoriteId]) {
+      this._favoriteId,
+      this._detail]) {
     _colors = [];
     _sizes = [];
     _images = [];
@@ -58,6 +61,7 @@ class FavoriteModel {
   String get name => this._name;
   String get brand => this._brand;
   String get category => this._category;
+  String get detail => this._detail;
   bool get sale => this._sale;
   bool get feature => this._featured;
   double get price => this._price;
@@ -74,6 +78,7 @@ class FavoriteModel {
   set name(String newName) => this._name = newName;
   set brand(String newBrand) => this._brand = newBrand;
   set category(String newCategory) => this._category = newCategory;
+  set detail(String newDetial) => this._detail = newDetial;
   set sale(bool newSale) => this.sale = newSale;
   set feature(bool newFeature) => this._featured = newFeature;
   set price(double newPrice) => this._price = newPrice;
@@ -90,6 +95,7 @@ class FavoriteModel {
       USERID: userid,
       FAVORITEID: _favoriteId,
       CATEGORY: _category,
+      DETAIL: _detail,
       SALE: _sale,
       NAME: _name,
       QTY: _qty,
@@ -111,6 +117,7 @@ class FavoriteModel {
     _name = data[NAME];
     _brand = data[BRAND];
     _category = data[CATEGORY];
+    _detail = data[DETAIL] ?? '';
     _colors = data[COLORS];
     _sale = data[SALE];
     _featured = data[FEATURED];

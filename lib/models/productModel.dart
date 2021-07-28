@@ -32,20 +32,19 @@ class ProductModel {
   String _detail;
 
   ProductModel(
-      [this._name,
+      this._name,
       this._qty,
       this._price,
       this._category,
       this._brand,
-      this._detail]) {
-    _colors = [];
-    _sizes = [];
-    _images = [];
-    _featured = false;
-    _sale = false;
-    _productId = Uuid().v4();
-    _userid = getUserid();
-  }
+      this._detail,
+      this._colors,
+      this._sizes,
+      this._images,
+      this._featured,
+      this._sale,
+      this._productId,
+      this._userid);
 
 //GETTERS
   String get productId => this._productId;
@@ -116,7 +115,7 @@ class ProductModel {
     _name = data[NAME];
     _brand = data[BRAND];
     _category = data[CATEGORY];
-    _detail = data[DETAIL]??'';
+    _detail = data[DETAIL] ?? '';
     _colors = data[COLORS];
     _sale = data[SALE];
     _featured = data[FEATURED];
@@ -132,87 +131,80 @@ class ProductModel {
     print(_category.length);
   }
 
-  //FUNCTIONS
-  addColor(String color) {
-    if (_colors.contains(color) == false) {
-      _colors.add(color);
-    }
-  }
+//   //FUNCTIONS
+//   addColor(String color) {
+//     if (_colors.contains(color) == false) {
+//       _colors.add(color);
+//     }
+//   }
 
-  removeColor(String color) {
-    if (_colors.contains(color) == true) {
-      _colors.remove(color);
-    }
-  }
+//   removeColor(String color) {
+//     if (_colors.contains(color) == true) {
+//       _colors.remove(color);
+//     }
+//   }
 
-  checkBoxState(String value) {
-    if (colors.contains(value)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+//   checkBoxState(String value) {
+//     if (colors.contains(value)) {
+//       return true;
+//     } else {
+//       return false;
+//     }
+//   }
 
-  //ADD SIZES
-  addSize(String size) {
-    if (_sizes.contains(size) == false) {
-      _sizes.add(size);
-    }
-  }
+//   //ADD SIZES
+//   addSize(String size) {
+//     if (_sizes.contains(size) == false) {
+//       _sizes.add(size);
+//     }
+//   }
 
-  removeSize(String size) {
-    if (_sizes.contains(size) == true) {
-      _sizes.remove(size);
-    }
-  }
+//   removeSize(String size) {
+//     if (_sizes.contains(size) == true) {
+//       _sizes.remove(size);
+//     }
+//   }
 
-  sizeCheckState(String value) {
-    if (_sizes.contains(value)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+//   sizeCheckState(String value) {
+//     if (_sizes.contains(value)) {
+//       return true;
+//     } else {
+//       return false;
+//     }
+//   }
 
-//FEATURESTATE
-  bool featuredState() {
-    if (_featured) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+// //FEATURESTATE
+//   bool featuredState() {
+//     if (_featured) {
+//       return true;
+//     } else {
+//       return false;
+//     }
+//   }
 
-  featuredAction() {
-    if (_featured) {
-      _featured = false;
-    } else {
-      _featured = true;
-    }
-  }
+//   featuredAction() {
+//     if (_featured) {
+//       _featured = false;
+//     } else {
+//       _featured = true;
+//     }
+//   }
 
-  bool saleState() {
-    if (!_sale) {
-      return false;
-    } else {
-      return true;
-    }
-  }
+//   bool saleState() {
+//     if (!_sale) {
+//       return false;
+//     } else {
+//       return true;
+//     }
+//   }
 
-  saleAction() {
-    if (_sale) {
-      _sale = false;
-    } else {
-      _sale = true;
-    }
-  }
+//   saleAction() {
+//     if (_sale) {
+//       _sale = false;
+//     } else {
+//       _sale = true;
+//     }
+//   }
 
-  String getUserid() {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String autState;
-    if (_auth.currentUser != null) {
-      autState = _auth.currentUser.uid.toString();
-    }
-    return autState;
-  }
+ 
 }

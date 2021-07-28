@@ -1,15 +1,12 @@
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-// import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
-class EditProfileControle {
+
+class UserEdit {
   Future<bool> uploadProfileImage({File image, String uid}) async {
     final String pic1Name = DateTime.now().millisecondsSinceEpoch.toString();
-
     try {
       TaskSnapshot task = await firebase_storage.FirebaseStorage.instance
           .ref()

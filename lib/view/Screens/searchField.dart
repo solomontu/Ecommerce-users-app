@@ -21,7 +21,7 @@ class _SearchState extends State<Search> {
         children: [
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            height: 100,
+            height: 140,
             color: Theme.of(context).primaryColor,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,

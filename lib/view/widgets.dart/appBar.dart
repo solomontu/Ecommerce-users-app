@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecom/controle/authServices.dart';
 import 'package:flutter_ecom/controle/cartFavoServices.dart';
+import 'package:flutter_ecom/controle/cartTotalPriceService.dart';
 import 'package:flutter_ecom/models/cartModel.dart';
 import 'package:flutter_ecom/models/favoriteModel.dart';
+import 'package:flutter_ecom/models/productModel.dart';
 import 'package:flutter_ecom/view/Screens/favoriteBody.dart';
+import 'package:flutter_ecom/view/common/userId.dart';
 import 'package:flutter_ecom/view/homeScreenElements/addProduct.dart';
 import 'package:flutter_ecom/view/Screens/myStore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,17 +16,15 @@ import '../Screens/myHomePage.dart';
 import '../Screens/searchField.dart';
 
 //CART LENGHT
-StreamProvider<List<CartModel>> _cartLenght =
-    StreamProvider<List<CartModel>>((ref) {
-  final repository = ref.read(cartFavoriteProvider);
-  return repository.getFromcart();
+final _cartLenght = StreamProvider.autoDispose<List<CartModel>>((ref) {
+  final repository = ref.watch(authStatus.notifier);
+  return repository.cartItems;
 });
 
 //FAVORITE LENGHT
-StreamProvider<List<FavoriteModel>> _favoritemLentht =
-    StreamProvider<List<FavoriteModel>>((ref) {
-  final repository = ref.read(cartFavoriteProvider);
-  return repository.getFromFavorite();
+final _favoritemLentht = StreamProvider.autoDispose<List<FavoriteModel>>((ref) {
+  final repository = ref.watch(authStatus.notifier);
+  return repository.favoriteItems;
 });
 
 Widget appbar(
@@ -35,7 +37,7 @@ Widget appbar(
   String favorite,
 }) {
   return PreferredSize(
-    preferredSize: Size.fromHeight(50.0),
+    preferredSize: Size.fromHeight(65.0),
     child: AppBar(
       elevation: 0.0,
       title: Row(
@@ -73,7 +75,12 @@ iconButtonHelpa(
         ),
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (contex) => AddProduct()));
+              context,
+              MaterialPageRoute(
+                  builder: (contex) => AddProduct(
+                        productModel: ProductModel('', 0, 0.0, '', '', '',
+                            [], [], [], false, false, '', ''),
+                      )));
         });
   } else if (add == 'notadd') {
     return SizedBox();
@@ -102,7 +109,6 @@ iconButtonHelpa(
           color: Colors.white,
         ),
         onPressed: () {
-          
           Navigator.push(
               context, MaterialPageRoute(builder: (constext) => Search()));
         });
@@ -148,6 +154,7 @@ iconButtonHelpa(
         Icons.shopping_cart,
         color: Colors.white,
       ),
+      onPressed: () {},
       // onPressed: () {
       //   Navigator.push(
       //       context, MaterialPageRoute(builder: (contex) => CartBody()));
@@ -168,7 +175,11 @@ iconButtonHelpa(
             ),
             onPressed: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Favorite()));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Favorite(
+                          // favoriteBody: favoriteData,
+                          )));
             }),
         Positioned(
           right: 7,
@@ -197,6 +208,7 @@ iconButtonHelpa(
         Icons.favorite,
         color: Colors.white,
       ),
+      onPressed: () {},
       // onPressed: () => null
     );
   } else if (favorite == 'notfavorite') {

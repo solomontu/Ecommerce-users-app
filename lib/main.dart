@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecom/controle/authServices.dart';
+import 'package:flutter_ecom/testing.dart';
 import 'package:flutter_ecom/view/Screens/myHomePage.dart';
 import 'package:flutter_ecom/controle/network.dart';
 import 'package:flutter_ecom/view/Screens/signup.dart';
@@ -21,6 +22,12 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     return MaterialApp(
+        builder: (context, child) {
+          return ScrollConfiguration(
+            behavior: MyBehavior(),
+            child: child,
+          );
+        },
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             scaffoldBackgroundColor: Colors.grey[100],
@@ -28,8 +35,9 @@ class MyApp extends ConsumerWidget {
             visualDensity: VisualDensity.adaptivePlatformDensity,
             primaryColor: Colors.pink[900]),
         home: ScreensController()
-        // ListTest(),
-        // MyHomePage(),
+
+        // ScreensController()
+
         );
   }
 }
@@ -38,9 +46,13 @@ class ScreensController extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final status = watch(authStatus);
-    // AuthWithEmailPassword status = watch(authStatus.notifier);
+    // AuthWithEmailPassword status1 = watch(authStatus.notifier);
 
     switch (status) {
+      case Status.noNetwork:
+        print('THE STATUS IS: $status');
+        return NoInternetUi();
+        break;
       case Status.unInitialized:
         print('THE STATUS IS: $status');
         return Splash();
@@ -53,11 +65,6 @@ class ScreensController extends ConsumerWidget {
         print('THE STATUS IS: $status');
         return MyHomePage();
         break;
-      case Status.noNetwork:
-        print('THE STATUS IS: $status');
-        return NoInternetUi();
-        break;
-
       default:
         print('THE STATUS IS: $status');
         return Login();
@@ -82,7 +89,15 @@ class ScreensController extends ConsumerWidget {
 //         break;
 //       default:
 //         print('THE STATUS IS: $status');
-//         return Login();
+//         return ScreensController();
 //     }
 //   }
 // }
+
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
+}

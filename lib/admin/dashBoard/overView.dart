@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecom/view/common/navigation.dart';
 import 'package:pie_chart/pie_chart.dart';
+
+import '../onSalePage.dart';
 // Overview
 
 class Overview extends StatefulWidget {
@@ -25,30 +28,47 @@ class _DashboardState extends State<Overview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView(
+        body: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            RichText(
-              text: TextSpan(
-                text: 'Revenue: ',
-                style: TextStyle(color: Colors.black87),
-                // DefaultTextStyle.of(context).style,
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '\$${"20000"}  ',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.green)),
-                  TextSpan(text: ' Users: '),
-                  TextSpan(
-                      text: '35689 ',
-                      style: TextStyle(color: Colors.blue[900])),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: Text(
+                    'Revenue: ',
+                    style: TextStyle(color: Colors.black87, fontSize: 35),
+                  )),
+                  Expanded(
+                      child: Text('\$${"00000"}  ',
+                          style: TextStyle(color: Colors.green, fontSize: 35)))
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: Text(' Users: ',
+                          style:
+                              TextStyle(color: Colors.black87, fontSize: 25))),
+                  Expanded(
+                      child: Text('0 ',
+                          style:
+                              TextStyle(color: Colors.blue[900], fontSize: 25)))
                 ],
               ),
             ),
             SizedBox(
-              height: 10,
+              height: 30,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -88,21 +108,23 @@ class _DashboardState extends State<Overview> {
                     ),
                   ),
                 ),
+                //////////////////////
                 Expanded(
                   child: Card(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
-                    color: Colors.red,
+                    color: Colors.green[900],
                     child: ListTile(
+                      onTap: () => changeScreen(context, OnSale()),
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Icon(
-                            Icons.cancel_outlined,
+                            Icons.shopping_bag_outlined,
                             color: Colors.white,
                           ),
                           Text(
-                            'Return',
+                            'On sale',
                             style: TextStyle(fontSize: 20, color: Colors.white),
                           ),
                         ],
@@ -112,7 +134,7 @@ class _DashboardState extends State<Overview> {
                         children: [
                           Expanded(
                             child: Text(
-                              '0',
+                              '1005',
                               textAlign: TextAlign.center,
                               style:
                                   TextStyle(fontSize: 30, color: Colors.white),
@@ -167,17 +189,17 @@ class _DashboardState extends State<Overview> {
                   child: Card(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
-                    color: Colors.green[900],
+                    color: Colors.red,
                     child: ListTile(
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Icon(
-                            Icons.shopping_bag_outlined,
+                            Icons.cancel_outlined,
                             color: Colors.white,
                           ),
                           Text(
-                            'Stock',
+                            'Return',
                             style: TextStyle(fontSize: 20, color: Colors.white),
                           ),
                         ],
@@ -187,7 +209,7 @@ class _DashboardState extends State<Overview> {
                         children: [
                           Expanded(
                             child: Text(
-                              '1005',
+                              '0',
                               textAlign: TextAlign.center,
                               style:
                                   TextStyle(fontSize: 30, color: Colors.white),
@@ -200,6 +222,9 @@ class _DashboardState extends State<Overview> {
                 ),
               ],
             ),
+            SizedBox(
+              height: 30,
+            ),
             Column(
               children: [
                 Padding(
@@ -209,6 +234,7 @@ class _DashboardState extends State<Overview> {
                       Text(
                         'Sales per category',
                         textAlign: TextAlign.left,
+                        style: TextStyle(fontSize: 20),
                       ),
                     ],
                   ),
@@ -219,7 +245,8 @@ class _DashboardState extends State<Overview> {
                     dataMap: dataMap,
                     animationDuration: Duration(milliseconds: 800),
                     chartLegendSpacing: 32,
-                    chartRadius: MediaQuery.of(context).size.width / 3.2,
+                    chartRadius: 200,
+                    // MediaQuery.of(context).size.width / 3.2,
                     colorList: colorList,
                     initialAngleInDegree: 0,
                     chartType: ChartType.ring,

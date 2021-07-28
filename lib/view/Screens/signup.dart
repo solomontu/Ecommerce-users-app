@@ -69,35 +69,32 @@ class SignUp extends ConsumerWidget {
     final year = watch(birthYearDropValue);
     return Scaffold(
       key: _scaffoldKey,
-      body: Center(
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 30, bottom: 20),
-              child: Form(
-                key: _formKeySignUp,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30.0, bottom: 15),
-                        child: Text(
-                          'Flushion',
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 40,
-                              letterSpacing: 4),
+      body: Card(
+        child: Center(
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 30, bottom: 20),
+                child: Form(
+                  key: _formKeySignUp,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30.0, bottom: 15),
+                          child: Text(
+                            'Signup',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 40,
+                                letterSpacing: 4),
+                          ),
                         ),
-                      ),
-                      // First name
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 4),
-                        child: Material(
-                          elevation: 20,
-                          // color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10),
+                        // First name
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 4),
                           child: TextFormField(
                             keyboardType: TextInputType.text,
                             controller: firstNameController,
@@ -128,16 +125,11 @@ class SignUp extends ConsumerWidget {
                             },
                           ),
                         ),
-                      ),
 
-                      //Last Name
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 4),
-                        child: Material(
-                          elevation: 20,
-                          // color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10),
+                        //Last Name
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 4),
                           child: TextFormField(
                               keyboardType: TextInputType.text,
                               controller: surNameController,
@@ -166,16 +158,11 @@ class SignUp extends ConsumerWidget {
                                 surNameContModel();
                               }),
                         ),
-                      ),
 
-                      //EMAIL FIELD SETTINGS
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 4),
-                        child: Material(
-                          elevation: 20,
-                          // color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10),
+                        //EMAIL FIELD SETTINGS
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 4),
                           child: TextFormField(
                             keyboardType: TextInputType.emailAddress,
                             controller: emailController,
@@ -191,7 +178,7 @@ class SignUp extends ConsumerWidget {
                                 //  color: Colors.black
                               ),
                               // alignLabelWithHint: true,
-                              hintText: 'Email or phone',
+                              hintText: 'Email',
                             ),
                             validator: (value) {
                               if (value.isEmpty) {
@@ -210,16 +197,11 @@ class SignUp extends ConsumerWidget {
                             },
                           ),
                         ),
-                      ),
 
-                      // PASSWORD FIELD SETTINGS
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 4),
-                        child: Material(
-                          elevation: 20,
-                          // color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10),
+                        // PASSWORD FIELD SETTINGS
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 4),
                           child: TextFormField(
                             obscureText: hidepassword.state,
                             keyboardType: TextInputType.visiblePassword,
@@ -256,400 +238,403 @@ class SignUp extends ConsumerWidget {
                             },
                           ),
                         ),
-                      ),
-
-                      //================ RADIO BUTTON ============= =======================
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: minimumPadding, vertical: 8),
-                        child: Container(
-                          // color: Colors.grey[300],
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              //Genders column
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      'Gender',
-                                      style: TextStyle(
-                                        letterSpacing: 1.5,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w900,
-                                      ),
-                                    ),
-                                    Material(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.white.withOpacity(0.5),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            //MALE
-                                            Column(
-                                              children: <Widget>[
-                                                Radio(
-                                                    activeColor:
-                                                        Theme.of(context)
-                                                            .primaryColor,
-                                                    materialTapTargetSize:
-                                                        MaterialTapTargetSize
-                                                            .shrinkWrap,
-                                                    value: GenderCharacter.male,
-                                                    groupValue:
-                                                        _character.state,
-                                                    onChanged: (value) {
-                                                      _character.state = value;
-                                                      genderStringValue(
-                                                          _character.state);
-                                                    }),
-                                                Text('m',
-                                                    style: TextStyle(
-                                                        color: Colors.black54))
-                                              ],
-                                            ),
-                                            //FEAMLE
-                                            Column(
-                                              // mainAxisAlignment: MainAxisAlignment.start,
-                                              children: <Widget>[
-                                                Radio(
-                                                    activeColor:
-                                                        Theme.of(context)
-                                                            .primaryColor,
-                                                    materialTapTargetSize:
-                                                        MaterialTapTargetSize
-                                                            .shrinkWrap,
-                                                    value:
-                                                        GenderCharacter.female,
-                                                    groupValue:
-                                                        _character.state,
-                                                    onChanged: (value) {
-                                                      _character.state = value;
-
-                                                      genderStringValue(
-                                                          _character.state);
-                                                    }),
-                                                Text('f',
-                                                    style: TextStyle(
-                                                      color: Colors.black54,
-                                                    ))
-                                              ],
-                                            ),
-                                            //OTHERS
-                                            Column(
-                                              // mainAxisAlignment: MainAxisAlignment.start,
-                                              children: <Widget>[
-                                                Radio(
-                                                    activeColor:
-                                                        Theme.of(context)
-                                                            .primaryColor,
-                                                    materialTapTargetSize:
-                                                        MaterialTapTargetSize
-                                                            .shrinkWrap,
-                                                    value:
-                                                        GenderCharacter.others,
-                                                    groupValue:
-                                                        _character.state,
-                                                    onChanged: (value) {
-                                                      _character.state = value;
-                                                      genderStringValue(
-                                                          _character.state);
-                                                    }),
-                                                Text('o',
-                                                    style: TextStyle(
-                                                        color: Colors.black54)),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Gender',
+                                style: TextStyle(
+                                  letterSpacing: 1.5,
+                                  // color: Colors.black,
+                                  // fontWeight: FontWeight.w900,
                                 ),
                               ),
-                              SizedBox(
-                                width: 5.0,
-                              ),
-
-                              // ================Birthday column=================
-                              Expanded(
-                                  child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  Text('Date of birth',
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w900,
-                                          letterSpacing: 1.5)),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.white.withOpacity(0.5),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        // BIRTH DAY DROPDOWN
-                                        Column(
-                                          children: <Widget>[
-                                            SizedBox(
-                                              height: 30,
-                                              child: DropdownButton(
-                                                  underline: SizedBox(),
-                                                  dropdownColor: Colors.white70,
-                                                  elevation: 20,
-                                                  value: day.state,
-                                                  items: daylist().map<
-                                                      DropdownMenuItem<
-                                                          int>>((int value) {
-                                                    return DropdownMenuItem(
-                                                        value: value,
-                                                        child: Text(
-                                                          '$value',
-                                                          style: TextStyle(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .primaryColor),
-                                                        ));
-                                                  }).toList(),
-                                                  onChanged: (int value) {
-                                                    day.state = value;
-                                                    dayString = value;
-                                                  }),
-                                            ),
-                                            Text(
-                                              'd',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  color: Colors.black54),
-                                            )
-                                          ],
-                                        ),
-
-                                        //BIRTH MONTH
-                                        Column(
-                                          children: <Widget>[
-                                            SizedBox(
-                                              height: 30,
-                                              child: DropdownButton(
-                                                  underline: SizedBox(),
-                                                  dropdownColor: Colors.white70,
-                                                  elevation: 20,
-                                                  value: month.state,
-                                                  items: monthList().map<
-                                                      DropdownMenuItem<
-                                                          int>>((value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                        '$value',
-                                                        style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .primaryColor),
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (int value) {
-                                                    month.state = value;
-                                                    monthString = value;
-                                                  }),
-                                            ),
-                                            Text(
-                                              'm',
-                                              style: TextStyle(
-                                                  color: Colors.black54),
-                                            )
-                                          ],
-                                        ),
-
-                                        // BIRTHYEAR DROPDOWN
-                                        Column(
-                                          children: <Widget>[
-                                            SizedBox(
-                                              height: 30,
-                                              child: DropdownButton(
-                                                  underline: SizedBox(),
-                                                  dropdownColor: Colors.white70,
-                                                  elevation: 20,
-                                                  value: year.state,
-                                                  items: yearlist().map<
-                                                      DropdownMenuItem<
-                                                          int>>((int value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                        '$value',
-                                                        style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .primaryColor),
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (int value) {
-                                                    year.state = value;
-                                                    yearString = value;
-                                                  }),
-                                            ),
-                                            Text(
-                                              'y',
-                                              style: TextStyle(
-                                                  color: Colors.black54),
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ))
                             ],
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: minimumPadding),
-                        child: MaterialButton(
-                          // textColor: Colors.black,
 
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
+                        //================ RADIO BUTTON ============= =======================
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: minimumPadding, vertical: 8),
+                          child: Container(
+                            // color: Colors.grey[300],
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                //Genders column
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Material(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color:
+                                                Colors.white.withOpacity(0.5),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              //MALE
+                                              Column(
+                                                children: <Widget>[
+                                                  Radio(
+                                                      activeColor:
+                                                          Theme.of(context)
+                                                              .primaryColor,
+                                                      materialTapTargetSize:
+                                                          MaterialTapTargetSize
+                                                              .shrinkWrap,
+                                                      value:
+                                                          GenderCharacter.male,
+                                                      groupValue:
+                                                          _character.state,
+                                                      onChanged: (value) {
+                                                        _character.state =
+                                                            value;
+                                                        genderStringValue(
+                                                            _character.state);
+                                                      }),
+                                                  Text('Male',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.black54))
+                                                ],
+                                              ),
+                                              //FEAMLE
+                                              Column(
+                                                // mainAxisAlignment: MainAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Radio(
+                                                      activeColor:
+                                                          Theme.of(context)
+                                                              .primaryColor,
+                                                      materialTapTargetSize:
+                                                          MaterialTapTargetSize
+                                                              .shrinkWrap,
+                                                      value: GenderCharacter
+                                                          .female,
+                                                      groupValue:
+                                                          _character.state,
+                                                      onChanged: (value) {
+                                                        _character.state =
+                                                            value;
 
-                          onPressed: () async {
-                            _validator();
-                            FormState _formState = _formKeySignUp.currentState;
-                            if (_formState.validate() && _validator() == true) {
-                              assert(await others.chekNetwork() == true,
-                                  toast(msg: 'No network'));
-                              Future<bool> signUp =
-                                  others.signUp(userMap: model.toMap());
-
-                              if (!await signUp) {
-                                toast(
-                                  msg: others.error.toString(),
-                                );
-
-                                // _scaffoldKey.currentState.showSnackBar(SnackBar(
-                                //   content: Text(others.error.toString()),
-                                // ));
-                              } else {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => MyHomePage()));
-                              }
-                            }
-                          },
-
-                          color: Colors.pink,
-                          child: Text(
-                            'Signup',
-                            style: TextStyle(
-                                color: Colors.white,
-                                // fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                letterSpacing: 2.0),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: InkWell(
-                            borderRadius: BorderRadius.circular(20),
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              'Already has an account ?',
-                              style: TextStyle(letterSpacing: 1.5),
-                              textAlign: TextAlign.center,
-                            )),
-                      ),
-                      Text(
-                        'Or',
-                        style: TextStyle(
-                            color: Colors.black54, letterSpacing: 1.5),
-                        textAlign: TextAlign.center,
-                      ),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.only(bottom: minimumPadding),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(20),
-                                onTap: () {
-                                  // Do stuff here;
-                                },
-                                child: ClipOval(
-                                  child: SvgPicture.asset(
-                                    'Assets/images/singleImages/facebook-logo@logotyp.us.svg',
-                                    width: 50,
-                                    height: 50,
+                                                        genderStringValue(
+                                                            _character.state);
+                                                      }),
+                                                  Text('Female',
+                                                      style: TextStyle(
+                                                        color: Colors.black54,
+                                                      ))
+                                                ],
+                                              ),
+                                              //OTHERS
+                                              Column(
+                                                // mainAxisAlignment: MainAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Radio(
+                                                      activeColor:
+                                                          Theme.of(context)
+                                                              .primaryColor,
+                                                      materialTapTargetSize:
+                                                          MaterialTapTargetSize
+                                                              .shrinkWrap,
+                                                      value: GenderCharacter
+                                                          .others,
+                                                      groupValue:
+                                                          _character.state,
+                                                      onChanged: (value) {
+                                                        _character.state =
+                                                            value;
+                                                        genderStringValue(
+                                                            _character.state);
+                                                      }),
+                                                  Text('Others',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.black54)),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              )),
-                          Padding(
-                              padding: EdgeInsets.only(bottom: minimumPadding),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(20),
-                                onTap: () {
-                                  // Do stuff here;
-                                },
-                                child: ClipOval(
-                                    child: Image(
-                                  image: AssetImage(
-                                      'Assets/images/singleImages/ggg.png'),
-                                  height: 40,
-                                  width: 40,
-                                )
+                              ],
+                            ),
+                          ),
+                        ),
 
-                                    // ),
-                                    ),
+                        // ================Birthday column=================
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text('Date of birth',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                      // color: Colors.black,
+                                      // fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.5)),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Column(
+                            // crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white.withOpacity(0.5),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    // BIRTH DAY DROPDOWN
+                                    DropdownButton(
+                                        hint: Text(
+                                          'Day',
+                                          textAlign: TextAlign.center,
+                                          style:
+                                              TextStyle(color: Colors.black54),
+                                        ),
+                                        underline: SizedBox(),
+                                        dropdownColor:
+                                            Theme.of(context).primaryColor,
+                                        elevation: 20,
+                                        value: day.state,
+                                        items: daylist()
+                                            .map<DropdownMenuItem<int>>(
+                                                (int value) {
+                                          return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(
+                                                '$value',
+                                                style: TextStyle(
+                                                    color: Colors.black87),
+                                              ));
+                                        }).toList(),
+                                        onChanged: (int value) {
+                                          day.state = value;
+                                          dayString = value;
+                                        }),
+
+                                    //BIRTH MONTH
+                                    DropdownButton(
+                                        hint: Text(
+                                          'Month',
+                                          style:
+                                              TextStyle(color: Colors.black54),
+                                        ),
+                                        underline: SizedBox(),
+                                        dropdownColor:
+                                            Theme.of(context).primaryColor,
+                                        elevation: 20,
+                                        value: month.state,
+                                        items: monthList()
+                                            .map<DropdownMenuItem<int>>(
+                                                (value) {
+                                          return DropdownMenuItem<int>(
+                                            value: value,
+                                            child: Text(
+                                              '$value',
+                                              style: TextStyle(
+                                                  color: Colors.black87),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (int value) {
+                                          month.state = value;
+                                          monthString = value;
+                                        }),
+
+                                    // BIRTHYEAR DROPDOWN
+                                    Column(
+                                      children: <Widget>[
+                                        DropdownButton(
+                                            hint: Text(
+                                              'Year',
+                                              style: TextStyle(
+                                                  color: Colors.black87),
+                                            ),
+                                            underline: SizedBox(),
+                                            dropdownColor:
+                                                Theme.of(context).primaryColor,
+                                            elevation: 20,
+                                            value: year.state,
+                                            items: yearlist()
+                                                .map<DropdownMenuItem<int>>(
+                                                    (int value) {
+                                              return DropdownMenuItem<int>(
+                                                value: value,
+                                                child: Text(
+                                                  '$value',
+                                                  style: TextStyle(
+                                                      color: Colors.black87),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (int value) {
+                                              year.state = value;
+                                              yearString = value;
+                                            }),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: minimumPadding),
+                          child: MaterialButton(
+                            // textColor: Colors.black,
+
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+
+                            onPressed: () async {
+                              _validator();
+                              FormState _formState =
+                                  _formKeySignUp.currentState;
+                              if (_formState.validate() &&
+                                  _validator() == true) {
+                                // assert(await others.chekNetwork() == true,
+                                // toast(msg: 'No network'));
+                                Future<bool> signUp =
+                                    others.signUp(userMap: model.toMap());
+
+                                if (!await signUp) {
+                                  toast(
+                                    msg: others.message.toString(),
+                                  );
+
+                                  // _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                  //   content: Text(others.error.toString()),
+                                  // ));
+                                } else {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => MyHomePage()));
+                                }
+                              }
+                            },
+
+                            color: Theme.of(context).primaryColorDark,
+                            child: Text(
+                              'Signup',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  // fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  letterSpacing: 2.0),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                'Already have an account ?',
+                                style: TextStyle(letterSpacing: 1.5),
+                                textAlign: TextAlign.center,
                               )),
-                        ],
-                      ),
-                    ],
+                        ),
+                        Text(
+                          'Or',
+                          style: TextStyle(
+                              color: Colors.black54, letterSpacing: 1.5),
+                          textAlign: TextAlign.center,
+                        ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Padding(
+                                padding:
+                                    EdgeInsets.only(bottom: minimumPadding),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  onTap: () {
+                                    // Do stuff here;
+                                  },
+                                  child: ClipOval(
+                                    child: SvgPicture.asset(
+                                      'Assets/images/singleImages/facebook-logo@logotyp.us.svg',
+                                      width: 50,
+                                      height: 50,
+                                    ),
+                                  ),
+                                )),
+                            Padding(
+                                padding:
+                                    EdgeInsets.only(bottom: minimumPadding),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  onTap: () {
+                                    // Do stuff here;
+                                  },
+                                  child: ClipOval(
+                                      child: Image(
+                                    image: AssetImage(
+                                        'Assets/images/singleImages/ggg.png'),
+                                    height: 40,
+                                    width: 40,
+                                  )
+
+                                      // ),
+                                      ),
+                                )),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Visibility(
-                visible: status == Status.authenticating,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      // shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.7)),
-                  child: Center(
-                    child: Container(
-                      color: Colors.white,
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(Colors.red),
-                      ),
-                    ),
-                  ),
-                ))
-          ],
+              Visibility(
+                  visible: status == Status.authenticating,
+                  child: Container(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      color: Colors.white30,
+                      child: Center(
+                          child: Padding(
+                        padding: const EdgeInsets.all(30.0),
+                        child: Container(
+                          color: Colors.white,
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.white70,
+                          ),
+                        ),
+                      ))))
+            ],
+          ),
         ),
       ),
     );

@@ -20,21 +20,6 @@ class Login extends ConsumerWidget {
   final _password = TextEditingController();
   final minimumPadding = 10.0;
 
-//google signIn handler on compilation time
-  // @override
-  // void initState() {
-  //   _email.text = model.email;
-  //   _password.text = model.passWord;
-  //   super.initState();
-  // }
-
-  // void dispose() {
-  //   // Clean up the controller when the widget is disposed.
-  //   _email.dispose();
-  //   _password.dispose();
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     Status status = watch(authStatus);
@@ -43,37 +28,35 @@ class Login extends ConsumerWidget {
 
     return Scaffold(
       key: _scaffoldKey,
-      body: Center(
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Form(
-                key: _formKeyLogIn,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 30.0, bottom: 15),
-                      child: Text(
-                        'Flushion',
-                        style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 40,
-                            letterSpacing: 4),
+      body: Card(
+        child: Center(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              SingleChildScrollView(
+                child: Form(
+                  key: _formKeyLogIn,
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30.0, bottom: 15),
+                        child: Text(
+                          'Signin',
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 40,
+                              letterSpacing: 4),
+                        ),
                       ),
-                    ),
 
-                    //EMAIL FIELD SETTINGS
-                    Padding(
-                      padding: EdgeInsets.only(
-                          // top: minimumPadding -5,
-                          bottom: minimumPadding,
-                          left: minimumPadding,
-                          right: minimumPadding),
-                      child: Material(
-                        elevation: 20,
-                        // color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10),
+                      //EMAIL FIELD SETTINGS
+                      Padding(
+                        padding: EdgeInsets.only(
+                            // top: minimumPadding -5,
+                            bottom: minimumPadding,
+                            left: minimumPadding,
+                            right: minimumPadding),
                         child: TextFormField(
                           // onChanged: (value) {
                           //   emailer();
@@ -105,16 +88,11 @@ class Login extends ConsumerWidget {
                           // onSaved: (input) => _email = input.trim(),
                         ),
                       ),
-                    ),
 
-                    // PASSWORD FIELD SETTINGS
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: minimumPadding, right: minimumPadding),
-                      child: Material(
-                        elevation: 20,
-                        borderRadius: BorderRadius.circular(10),
-                        // color: Colors.grey[300],
+                      // PASSWORD FIELD SETTINGS
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: minimumPadding, right: minimumPadding),
                         child: TextFormField(
                           // onChanged: (value) {
                           //   passworder();
@@ -149,135 +127,133 @@ class Login extends ConsumerWidget {
                           // onSaved: (input) => _passWord = input.trim(),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: minimumPadding, horizontal: minimumPadding),
-                      child: MaterialButton(
-                        // textColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: minimumPadding,
+                            horizontal: minimumPadding),
+                        child: MaterialButton(
+                          // textColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
 
-                        onPressed: () async {
-                          // AuthWithEmailPassword(
-                          //   email: model.email,
-                          //   password: model.passWord,
-                          // );
-                          assert(_formKeyLogIn.currentState.validate() == true);
-                          assert(await others.chekNetwork() == true,
-                              await toast(msg: 'No network'));
-                          var event = await others.signInAuthentic(
-                              emaill: _email.text, passwordd: _password.text);
+                          onPressed: () async {
+                            // AuthWithEmailPassword(
+                            //   email: model.email,
+                            //   password: model.passWord,
+                            // );
+                            assert(
+                                _formKeyLogIn.currentState.validate() == true);
+                            // assert(await others.chekNetwork() == true,
+                            //     await toast(msg: 'No network'));
+                            var event = await others.signInAuthentic(
+                                emaill: _email.text, passwordd: _password.text);
 
-                          if (event == true) {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => MyHomePage()));
-                          } else {
-                            await toast(msg: others.error.toString());
-                          }
-                        },
+                            if (event == true) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => MyHomePage()));
+                            } else {
+                              await toast(msg: others.message.toString());
+                            }
+                          },
 
-                        color: Colors.pink,
-                        child: Text(
-                          'Signin',
-                          style: TextStyle(
-                              color: Colors.white,
-                              // fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              letterSpacing: 2.0),
+                          color: Theme.of(context).primaryColorDark,
+                          child: Text(
+                            'Signin',
+                            style: TextStyle(
+                                color: Colors.white,
+                                // fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                letterSpacing: 2.0),
+                          ),
                         ),
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          onTap: () {},
-                          child: Text(
-                            'Forgot password',
-                            style: TextStyle(letterSpacing: 1.5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell(
+                            onTap: () {},
+                            child: Text(
+                              'Forgot password',
+                              style: TextStyle(letterSpacing: 1.5),
+                            ),
                           ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignUp()));
-                          },
-                          child: Text(
-                            'Creat an account',
-                            style: TextStyle(letterSpacing: 1.5),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SignUp()));
+                            },
+                            child: Text(
+                              'Creat an account',
+                              style: TextStyle(letterSpacing: 1.5),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      'Or',
-                      style:
-                          TextStyle(color: Colors.black54, letterSpacing: 1.5),
-                      textAlign: TextAlign.center,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(bottom: minimumPadding),
-                            child: InkWell(
-                              onTap: () {
-                                // Do stuff here;
-                              },
-                              child: Container(
-                                child: SvgPicture.asset(
-                                  'Assets/images/singleImages/facebook-logo@logotyp.us.svg',
-                                  width: 40,
-                                  height: 60,
+                        ],
+                      ),
+                      Text(
+                        'Or',
+                        style: TextStyle(
+                            color: Colors.black54, letterSpacing: 1.5),
+                        textAlign: TextAlign.center,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(bottom: minimumPadding),
+                              child: InkWell(
+                                onTap: () {
+                                  // Do stuff here;
+                                },
+                                child: Container(
+                                  child: SvgPicture.asset(
+                                    'Assets/images/singleImages/facebook-logo@logotyp.us.svg',
+                                    width: 40,
+                                    height: 60,
+                                  ),
+                                  // alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30)),
                                 ),
-                                // alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30)),
-                              ),
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(
-                                left: minimumPadding, bottom: minimumPadding),
-                            child: InkWell(
-                              onTap: () {},
-                              child: CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                backgroundImage: AssetImage(
-                                    'Assets/images/singleImages/ggg.png'),
-                              ),
-                            )),
-                      ],
-                    )
-                  ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: minimumPadding, bottom: minimumPadding),
+                              child: InkWell(
+                                onTap: () {},
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage: AssetImage(
+                                      'Assets/images/singleImages/ggg.png'),
+                                ),
+                              )),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Visibility(
-                visible: status == Status.authenticating,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      // shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.7)),
-                  child: Center(
-                    child: Container(
-                      color: Colors.white,
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(Colors.red),
-                      ),
-                    ),
-                  ),
-                ))
-          ],
+              Visibility(
+                  visible: status == Status.authenticating,
+                  child: Container(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      color: Colors.white30,
+                      child: Center(
+                          child: Padding(
+                        padding: const EdgeInsets.all(30.0),
+                        child: Container(
+                          color: Colors.white,
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.white70,
+                          ),
+                        ),
+                      ))))
+            ],
+          ),
         ),
       ),
     );

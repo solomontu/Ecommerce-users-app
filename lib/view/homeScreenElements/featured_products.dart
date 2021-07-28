@@ -17,14 +17,16 @@ class FeaturedProducts extends ConsumerWidget {
 
     return _featureProducts.when(
       data: (value) => Container(
-        margin: EdgeInsets.symmetric(horizontal: 2),
-        height: 150,
+        // margin: EdgeInsets.symmetric(horizontal: 1),
+        height: 120,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(color: Colors.white, boxShadow: [
-          BoxShadow(offset: Offset(0, 0), blurRadius: 0),
-        ]),
+        // decoration: BoxDecoration(color: Colors.white, boxShadow: [
+        //   BoxShadow(offset: Offset(0, 0), blurRadius: 0),
+        // ]),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          physics: ScrollPhysics(),
           itemCount: value.length,
           itemBuilder: (BuildContext context, int index) {
             return FeatuedCard(

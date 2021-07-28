@@ -29,7 +29,6 @@ class UserModel {
       this._surName,
       this._photoUrl]);
 
-
   String get email => _email;
   String get passWord => _passWord;
   String get firstName => _firstName;
@@ -77,8 +76,7 @@ class UserModel {
     _surName = data[SURNAME] ?? '';
     _dateOfBirth = data[DATE_OF_BIRTH] ?? '';
     _gender = data[GENDER] ?? '';
-    _photoUrl = data[PHOTOURL] ??
-        'https://firebasestorage.googleapis.com/v0/b/ecommerce-cbc61.appspot.com/o/cusom_images%2Fprofile%20image.png?alt=media&token=5be100b2-ac9c-4413-9c39-d1f947cddac1';
+    _photoUrl = data[PHOTOURL];
   }
 
   //from shapshot values to map

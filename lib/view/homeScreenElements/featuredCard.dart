@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ecom/controle/product_Services.dart';
 import 'package:flutter_ecom/models/productModel.dart';
 import 'package:flutter_ecom/view/Screens/produtsDetails.dart';
+import 'package:flutter_ecom/view/Screens/similarProducts.dart';
+import 'package:flutter_ecom/view/common/callToAction.dart';
 import 'package:flutter_ecom/view/common/navigation.dart';
 import 'package:flutter_ecom/view/common/transparentImage.dart';
-import 'package:uuid/uuid.dart';
 
 class FeatuedCard extends StatelessWidget {
   final ProductModel productModel;
@@ -14,7 +15,7 @@ class FeatuedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 2.5, right: 2.5, top: 5),
+      padding: EdgeInsets.only(left: 0.5, right: 0.5, top: 3),
       child: Hero(
         tag: DateTime.now().millisecondsSinceEpoch.toString(),
         child: InkWell(
@@ -38,15 +39,36 @@ class FeatuedCard extends StatelessWidget {
                     sale: productModel.sale,
                     userid: productModel.userid,
                     detail: productModel.detail,
-                    similarList: await productctServices
-                        .getSimilarProducts(productModel.category.toString())));
+                    callToAction: CallToAction(
+                        brand: productModel.brand,
+                        category: productModel.category,
+                        colors: productModel.colors,
+                        featured: productModel.feature,
+                        images: productModel.images,
+                        name: productModel.name,
+                        price: productModel.price,
+                        qty: productModel.qty,
+                        productId: productModel.productId,
+                        sizes: productModel.sizes,
+                        sale: productModel.sale,
+                        userid: productModel.userid,
+                        detail: productModel.detail),
+                    ifSimilarProduct: SimilarProducts(
+                      productModel: await productctServices.getSimilarProducts(
+                        productModel.category.toString(),
+                      ),
+                    )
+                    // similarList: await productctServices
+                    //     .getSimilarProducts(productModel.category.toString())
+
+                    ));
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Container(
-                height: 135,
-                width: 110,
+                height: 115,
+                width: 115,
                 // color: Colors.transparent,IK
                 child: Card(
                   child: Stack(

@@ -4,6 +4,8 @@ import 'package:flutter_ecom/controle/product_Services.dart';
 import 'package:flutter_ecom/models/cartModel.dart';
 import 'package:flutter_ecom/models/productModel.dart';
 import 'package:flutter_ecom/view/Screens/produtsDetails.dart';
+import 'package:flutter_ecom/view/Screens/similarProducts.dart';
+import 'package:flutter_ecom/view/common/callToAction.dart';
 import 'package:flutter_ecom/view/common/constants.dart';
 import 'package:flutter_ecom/view/common/flutterToast.dart';
 import 'package:flutter_ecom/view/common/navigation.dart';
@@ -11,7 +13,6 @@ import 'package:flutter_ecom/view/common/transparentImage.dart';
 import 'package:flutter_ecom/view/common/userId.dart';
 import 'package:flutter_ecom/view/common/uuid.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 
 final star1 = StateProvider<bool>((ref) => false);
 final star2 = StateProvider<bool>((ref) => false);
@@ -39,23 +40,43 @@ class ProductCard extends ConsumerWidget {
               changeScreen(
                   context,
                   ProductDetails(
-                    brand: productModel.brand,
-                    category: productModel.category,
-                    colors: productModel.colors,
-                    featured: productModel.feature,
-                    images: productModel.images,
-                    name: productModel.name,
-                    price: productModel.price,
-                    qty: productModel.qty,
-                    productId: productModel.productId,
-                    sizes: productModel.sizes,
-                    sale: productModel.sale,
-                    userid: productModel.userid,
-                    detail: productModel.detail,
-                    similarList: await productctServices.getSimilarProducts(
-                      productModel.category.toString(),
-                    ),
-                  ));
+                      brand: productModel.brand,
+                      category: productModel.category,
+                      colors: productModel.colors,
+                      featured: productModel.feature,
+                      images: productModel.images,
+                      name: productModel.name,
+                      price: productModel.price,
+                      qty: productModel.qty,
+                      productId: productModel.productId,
+                      sizes: productModel.sizes,
+                      sale: productModel.sale,
+                      userid: productModel.userid,
+                      detail: productModel.detail,
+                      // similarList: await productctServices.getSimilarProducts(
+                      //   productModel.category.toString(),
+                      // ),
+                      callToAction: CallToAction(
+                        brand: productModel.brand,
+                        category: productModel.category,
+                        colors: productModel.colors,
+                        featured: productModel.feature,
+                        images: productModel.images,
+                        name: productModel.name,
+                        price: productModel.price,
+                        qty: productModel.qty,
+                        productId: productModel.productId,
+                        sizes: productModel.sizes,
+                        sale: productModel.sale,
+                        userid: productModel.userid,
+                        detail: productModel.detail,
+                      ),
+                      ifSimilarProduct: SimilarProducts(
+                        productModel:
+                            await productctServices.getSimilarProducts(
+                          productModel.category.toString(),
+                        ),
+                      )));
             },
             child: Hero(
               tag: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -63,7 +84,7 @@ class ProductCard extends ConsumerWidget {
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(10)),
                 // color: Colors.green,
-                height: 120,
+                height: 115,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -75,7 +96,7 @@ class ProductCard extends ConsumerWidget {
                           image: productModel.images[0],
                           placeholder: kTransparentImage,
                         ),
-                        // height: 110,
+                        height: 115,
                         width: 95,
                       ),
                     ),
@@ -179,6 +200,10 @@ class ProductCard extends ConsumerWidget {
                 canRequestFocus: true,
                 borderRadius: BorderRadius.circular(20),
                 onTap: () async {
+                  // await _cartFaServices.favoriteItemExist(
+                  //     proId: productModel.productId, userId: getUserid());
+                  // print(_cartFaServices.result);
+
                   if (await _cartFaServices.addToFavorite(
                     {
                       'productId': productModel.productId,
@@ -194,7 +219,8 @@ class ProductCard extends ConsumerWidget {
                       'colors': productModel.colors,
                       'sizes': productModel.sizes,
                       'images': productModel.images,
-                      'featured': productModel.feature
+                      'featured': productModel.feature,
+                      'detail': productModel.detail
                     },
                   )) {
                     toast(msg: 'Product added to your favorite');

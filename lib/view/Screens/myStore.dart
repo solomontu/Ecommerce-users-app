@@ -1,28 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecom/models/productModel.dart';
 import 'package:flutter_ecom/view/homeScreenElements/addProduct.dart';
 import 'package:flutter_ecom/admin/dashBoard/dashBoard.dart';
 import 'package:flutter_ecom/admin/dashBoard/overView.dart';
 import 'package:flutter_ecom/view/Screens/myHomePage.dart';
 import 'package:flutter_ecom/view/Screens/searchField.dart';
-import 'package:flutter_ecom/view/widgets.dart/cartBody.dart';
 
 class MyStore extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 0,
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: iconButton(context),
-          bottom: bottom(),
-        ),
-        body: TabBarView(children: [
-          Overview(),
-          DashBoard(),
-        ]),
-      ),
-    );
+        initialIndex: 0,
+        length: 2,
+        child: NestedScrollView(
+          headerSliverBuilder: (context, value) {
+            return [
+              SliverAppBar(
+                title: Text('My Store'),
+                bottom: bottom(),
+              )
+            ];
+          },
+          body: TabBarView(children: [
+            Overview(),
+            DashBoard(),
+          ]),
+        ));
   }
 }
 
